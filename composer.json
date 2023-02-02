@@ -1,0 +1,33 @@
+{
+    "name": "ufo-tech/rpc-objects",
+    "description": "Component for UFO-Tech RPC Library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alex Maystrenko",
+            "email": "ashterix69@gmail.com"
+        }
+    ],
+    "type" : "component",
+    "homepage": "https://github.com/ufo-tech/rpc-objects",
+    "require" : {
+        "php": ">=8.1",
+        "ufo-tech/rpc-exceptions": "1",
+        "symfony/serializer": "^6.2",
+        "symfony/validator": "^6.2",
+        "symfony/http-client": "^6.2",
+        "symfony/property-access": "^6.2",
+        "doctrine/annotations": "^2.0"
+    },
+    "autoload" : {
+        "psr-4" : {
+            "Ufo\\RpcObject\\": "src/"
+        }
+    },
+    "extra" : {
+    },
+    "scripts": {
+        "auto-scripts": {
+        }
+    }
+}
