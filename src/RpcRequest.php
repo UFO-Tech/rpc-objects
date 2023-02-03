@@ -81,7 +81,7 @@ class RpcRequest
         }
 
         $ps = ParamsSplitter::split($this->params);
-        $this->setRpcParams($ps->getSpecialParams());
+        $this->rpcParams = $ps->getSpecialParams();
         $this->clearRequire();
         if ($this->hasParams()
             && $matched = preg_grep('/^\@FROM\:/i', $this->getParams())
@@ -160,9 +160,11 @@ class RpcRequest
                 $data['jsonrpc'] ?? static::DEFAULT_VERSION,
                 json_encode($data)
             );
-        } catch (Throwable) {
+        } catch (Throwable $e) {
             $ref = new \ReflectionClass(static::class);
             $object = $ref->newInstanceWithoutConstructor();
+            $ref->getProperty('id')->setValue($object, $data['id'] ?? uniqid());
+            $ref->getProperty('version')->setValue($object, $data['jsonrpc'] ?? RpcRequest::DEFAULT_VERSION);
         }
 
         try {
