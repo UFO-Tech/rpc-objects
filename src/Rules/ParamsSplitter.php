@@ -21,6 +21,8 @@ class ParamsSplitter
                 unset($params[$v]);
             });
             $specialParams = SpecialRpcParams::fromArray($sp);
+        } else {
+            $specialParams = new SpecialRpcParams();
         }
         return new static($params, $specialParams);
     }
