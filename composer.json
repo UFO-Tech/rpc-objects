@@ -17,7 +17,7 @@
         "symfony/validator": "^6.2",
         "symfony/http-client": "^6.2",
         "symfony/property-access": "^6.2",
-        "doctrine/annotations": "^2.0"
+        "doctrine/annotations": "*"
     },
     "autoload" : {
         "psr-4" : {
