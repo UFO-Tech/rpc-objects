@@ -16,7 +16,7 @@ class RpcError
         protected string $message,
 
         #[Groups([self::IS_ERROR])]
-        protected \Throwable $data
+        protected \Throwable|array $data
     )
     {
     }
@@ -38,9 +38,9 @@ class RpcError
     }
 
     /**
-     * @return \Throwable
+     * @return \Throwable|array
      */
-    public function getData(): \Throwable
+    public function getData(): \Throwable|array
     {
         return $this->data;
     }
