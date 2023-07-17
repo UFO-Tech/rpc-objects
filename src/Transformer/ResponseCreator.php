@@ -12,7 +12,7 @@ class ResponseCreator
      * @param string $json
      * @return RpcResponse
      */
-    public static function fromJson(string $json): RpcResponse
+    public static function fromJson(string $json, bool $catchError = true): RpcResponse
     {
         $serializer = Transformer::getDefault();
         $responseArray = $serializer->decode($json, 'json');
@@ -31,6 +31,9 @@ class ResponseCreator
                     'Uncatchable async error',
                     $e
                 );
+            }
+            if (!$catchError) {
+                throw AbstractRpcErrorException::fromCode($error->getCode(), $error->getMessage());
             }
             $response = new RpcResponse(
                 id: $responseArray['id'],
