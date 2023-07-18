@@ -6,6 +6,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\Ignore;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Ufo\RpcError\AbstractRpcErrorException;
+use Ufo\RpcError\WrongWayException;
+
 class RpcResponse
 {
     const IS_RESULT = 'result';
@@ -54,13 +56,17 @@ class RpcResponse
         return $this->error;
     }
 
+    /**
+     * @throws WrongWayException
+     * @throws AbstractRpcErrorException
+     */
     public function throwError(): void
     {
         if (!is_null($this->error)) {
             if ($this->error->getData() instanceof \Throwable) {
-                throw new AbstractRpcErrorException::fromThrowable($this->error->getData());
+                throw AbstractRpcErrorException::fromThrowable($this->error->getData());
             } else {
-                throw new AbstractRpcErrorException::fromCode($this->error->getCode(), $this->error->getMessage());
+                throw AbstractRpcErrorException::fromCode($this->error->getCode(), $this->error->getMessage());
             }
         }
     }
