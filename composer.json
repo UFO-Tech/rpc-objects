@@ -12,7 +12,7 @@
     "homepage": "https://github.com/ufo-tech/rpc-objects",
     "require" : {
         "php": ">=8.1",
-        "ufo-tech/rpc-exceptions": "1",
+        "ufo-tech/rpc-exceptions": "*",
         "symfony/serializer": "6.*",
         "symfony/validator": "6.*",
         "symfony/http-client": "6.*",
