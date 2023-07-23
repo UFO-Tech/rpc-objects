@@ -12,7 +12,8 @@ use Ufo\RpcError\RpcInternalException;
 
     public function __construct(
         protected array  $responseFormat = [],
-        protected string $dto = ''
+        protected string $dto = '',
+        protected bool   $collection = false
     )
     {
         if (!empty($this->dto)) {
@@ -29,6 +30,9 @@ use Ufo\RpcError\RpcInternalException;
         $this->responseFormat = [];
         foreach ($ref->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
             $this->responseFormat[$property->getName()] = $property->getType()->getName();
+        }
+        if ($this->collection) {
+            $this->responseFormat = [$this->responseFormat];
         }
     }
 

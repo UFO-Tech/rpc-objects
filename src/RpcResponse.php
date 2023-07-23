@@ -7,18 +7,19 @@ use Symfony\Component\Serializer\Annotation\Ignore;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Ufo\RpcError\AbstractRpcErrorException;
 use Ufo\RpcError\WrongWayException;
+use Ufo\RpcObject\Transformer\Transformer;
 
 class RpcResponse
 {
     const IS_RESULT = 'result';
     const IS_ERROR = 'error';
-    
+
     public function __construct(
         #[Groups([self::IS_RESULT, self::IS_ERROR])]
         protected string|int $id,
 
         #[Groups([self::IS_RESULT])]
-        protected array|string $result = [],
+        protected array|string|object $result = [],
 
         #[Groups([self::IS_ERROR])]
         protected ?RpcError $error = null,
@@ -45,7 +46,11 @@ class RpcResponse
      */
     public function getResult(): array|string
     {
-        return $this->result;
+        $r = $this->result;
+        if (!is_string($r)) {
+            $r = Transformer::getDefault()->normalize($r);
+        }
+        return $r;
     }
 
     /**
