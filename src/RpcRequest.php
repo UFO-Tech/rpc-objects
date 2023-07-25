@@ -84,7 +84,7 @@ class RpcRequest
         $this->rpcParams = $ps->getSpecialParams();
         $this->clearRequire();
         if ($this->hasParams()
-            && $matched = preg_grep('/^\@FROM\:/i', $this->getParams())
+            && $matched = preg_grep('/^\@FROM\:/i', array_filter($this->getParams(), 'is_scalar'))
         ) {
             $self = $this;
             array_walk($matched, function ($value, $paramName) use ($self) {

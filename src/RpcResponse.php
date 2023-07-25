@@ -19,7 +19,7 @@ class RpcResponse
         protected string|int $id,
 
         #[Groups([self::IS_RESULT])]
-        protected array|string|object $result = [],
+        protected mixed $result = [],
 
         #[Groups([self::IS_ERROR])]
         protected ?RpcError $error = null,
@@ -44,10 +44,10 @@ class RpcResponse
     /**
      * @return array|string
      */
-    public function getResult(): array|string
+    public function getResult(): mixed
     {
         $r = $this->result;
-        if (!is_string($r)) {
+        if (is_object($r)) {
             $r = Transformer::getDefault()->normalize($r);
         }
         return $r;
