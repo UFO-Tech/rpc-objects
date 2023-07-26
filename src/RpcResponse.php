@@ -5,6 +5,7 @@ namespace Ufo\RpcObject;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\Ignore;
 use Symfony\Component\Serializer\Annotation\SerializedName;
+use Symfony\Component\Serializer\SerializerInterface;
 use Ufo\RpcError\AbstractRpcErrorException;
 use Ufo\RpcError\WrongWayException;
 use Ufo\RpcObject\Transformer\Transformer;
@@ -13,6 +14,8 @@ class RpcResponse
 {
     const IS_RESULT = 'result';
     const IS_ERROR = 'error';
+
+    protected SerializerInterface $transformer;
 
     public function __construct(
         #[Groups([self::IS_RESULT, self::IS_ERROR])]
@@ -31,6 +34,7 @@ class RpcResponse
         #[Ignore] protected ?RpcRequest $requestObject = null
     )
     {
+        $this->transformer = Transformer::getDefault();
     }
 
     /**
@@ -46,11 +50,22 @@ class RpcResponse
      */
     public function getResult(): mixed
     {
-        $r = $this->result;
-        if (is_object($r)) {
-            $r = Transformer::getDefault()->normalize($r);
-        }
-        return $r;
+        return match (gettype($r = $this->result)) {
+            'object' => $this->normalizeResult($r),
+            'array' => array_map(function ($data) {
+                try {
+                    return $this->normalizeResult($data);
+                } catch (\Throwable $e) {
+                    return $data;
+                }
+            }, $r),
+            default => $r
+        };
+    }
+
+    protected function normalizeResult(object $result): array
+    {
+        return $this->transformer->normalize($result, context: []);
     }
 
     /**
