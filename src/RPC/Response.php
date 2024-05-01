@@ -1,10 +1,11 @@
 <?php
 
-namespace Ufo\RpcObject;
+namespace Ufo\RpcObject\RPC;
 
 use Ufo\RpcError\RpcInternalException;
 
-#[\Attribute] class RpcInfo
+#[\Attribute]
+class Response
 {
     const STRING = 'string';
     const INT = 'int';
