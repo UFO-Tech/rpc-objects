@@ -5,7 +5,7 @@ namespace Ufo\RpcObject\RPC;
 
 use Attribute;
 
-#[Attribute]
+#[Attribute(Attribute::TARGET_CLASS)]
 class Info
 {
     const DEFAULT_CONCAT = '.';

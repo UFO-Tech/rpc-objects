@@ -2,9 +2,10 @@
 
 namespace Ufo\RpcObject\RPC;
 
+use Attribute;
 use Ufo\RpcError\RpcInternalException;
 
-#[\Attribute]
+#[Attribute(Attribute::TARGET_METHOD)]
 class Response
 {
     const STRING = 'string';
