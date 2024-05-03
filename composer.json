@@ -1,34 +1,34 @@
 {
-    "name": "ufo-tech/rpc-objects",
-    "version": "1.4",
-    "description": "Component for UFO-Tech RPC Library",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Alex Maystrenko",
-            "email": "ashterix69@gmail.com"
-        }
-    ],
-    "type" : "component",
-    "homepage": "https://github.com/ufo-tech/rpc-objects",
-    "require" : {
-        "php": ">=8.2",
-        "ufo-tech/rpc-exceptions": "*",
-        "symfony/serializer": "6.*",
-        "symfony/validator": "6.*",
-        "symfony/http-client": "6.*",
-        "symfony/property-access": "6.*",
-        "doctrine/annotations": "*"
-    },
-    "autoload" : {
-        "psr-4" : {
-            "Ufo\\RpcObject\\": "src/"
-        }
-    },
-    "extra" : {
-    },
-    "scripts": {
-        "auto-scripts": {
-        }
+  "name": "ufo-tech/rpc-objects",
+  "version": "1.5",
+  "description": "Component for UFO-Tech RPC Library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Alex Maystrenko",
+      "email": "ashterix69@gmail.com"
     }
+  ],
+  "type": "component",
+  "homepage": "https://github.com/ufo-tech/rpc-objects",
+  "require": {
+    "php": ">=8.2",
+    "ufo-tech/rpc-exceptions": "*",
+    "symfony/serializer": "6.*",
+    "symfony/validator": "6.*",
+    "symfony/http-client": "6.*",
+    "symfony/property-access": "6.*",
+    "doctrine/annotations": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Ufo\\RpcObject\\": "src/"
+    }
+  },
+  "extra": {
+  },
+  "scripts": {
+    "auto-scripts": {
+    }
+  }
 }
