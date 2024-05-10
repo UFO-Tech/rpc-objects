@@ -14,10 +14,10 @@
   "require": {
     "php": ">=8.2",
     "ufo-tech/rpc-exceptions": "*",
-    "symfony/serializer": "6.*",
-    "symfony/validator": "6.*",
-    "symfony/http-client": "6.*",
-    "symfony/property-access": "6.*",
+    "symfony/serializer": "*",
+    "symfony/validator": "*",
+    "symfony/http-client": "*",
+    "symfony/property-access": "*",
     "doctrine/annotations": "*"
   },
   "autoload": {
