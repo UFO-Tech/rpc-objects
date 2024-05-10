@@ -33,7 +33,8 @@ class Response
         $ref = new \ReflectionClass($this->dto);
         $this->responseFormat = [];
         foreach ($ref->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
-            $this->responseFormat[$property->getName()] = $property->getType()->getName();
+            $nullable = ($property->getType()->allowsNull()) ? '?' : '';
+            $this->responseFormat[$property->getName()] = $nullable.$property->getType()->getName();
         }
         if ($this->collection) {
             $this->responseFormat = [$this->responseFormat];
