@@ -12,21 +12,23 @@ class Response
     const INT = 'int';
     const BOOL = 'bool';
 
+    /**
+     * @throws RpcInternalException
+     */
     public function __construct(
-        protected array  $responseFormat = [],
+        protected ?array $responseFormat = null,
         protected string $dto = '',
-        protected bool   $collection = false
-    )
-    {
+        protected bool $collection = false
+    ) {
         if (!empty($this->dto)) {
             $this->parseDto();
         }
     }
 
-    protected function parseDto()
+    protected function parseDto(): void
     {
         if (!class_exists($this->dto)) {
-            throw new RpcInternalException('Class "' . $this->dto . '" is not found');
+            throw new RpcInternalException('Class "'.$this->dto.'" is not found');
         }
         $ref = new \ReflectionClass($this->dto);
         $this->responseFormat = [];
@@ -41,8 +43,9 @@ class Response
     /**
      * @return array
      */
-    public function getResponseFormat(): array
+    public function getResponseFormat(): ?array
     {
         return $this->responseFormat;
     }
+
 }

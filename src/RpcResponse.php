@@ -8,6 +8,7 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Serializer\SerializerInterface;
 use Ufo\RpcError\AbstractRpcErrorException;
 use Ufo\RpcError\WrongWayException;
+use Ufo\RpcObject\RPC\Cache;
 use Ufo\RpcObject\Transformer\Transformer;
 
 class RpcResponse
@@ -20,20 +21,18 @@ class RpcResponse
     public function __construct(
         #[Groups([self::IS_RESULT, self::IS_ERROR])]
         protected string|int $id,
-
         #[Groups([self::IS_RESULT])]
         protected mixed $result = [],
-
         #[Groups([self::IS_ERROR])]
         protected ?RpcError $error = null,
-
         #[Groups([self::IS_RESULT, self::IS_ERROR])]
         #[SerializedName('jsonrpc')]
         protected string $version = RpcRequest::DEFAULT_VERSION,
-
-        #[Ignore] protected ?RpcRequest $requestObject = null
-    )
-    {
+        #[Ignore]
+        protected ?RpcRequest $requestObject = null,
+        #[Ignore]
+        protected ?Cache $cache = null,
+    ) {
         $this->transformer = Transformer::getDefault();
     }
 
@@ -107,8 +106,16 @@ class RpcResponse
         return $this->requestObject;
     }
 
-    #[Ignore] public function getResponseSignature(): string
+    #[Ignore]
+    public function getResponseSignature(): string
     {
         return is_null($this->error) ? static::IS_RESULT : static::IS_ERROR;
     }
+
+    #[Ignore]
+    public function getCacheInfo(): ?Cache
+    {
+        return $this->cache;
+    }
+
 }
