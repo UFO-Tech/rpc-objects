@@ -17,8 +17,7 @@
     "symfony/serializer": "*",
     "symfony/validator": "*",
     "symfony/http-client": "*",
-    "symfony/property-access": "*",
-    "doctrine/annotations": "*"
+    "symfony/property-access": "*"
   },
   "autoload": {
     "psr-4": {

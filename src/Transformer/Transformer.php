@@ -2,11 +2,10 @@
 
 namespace Ufo\RpcObject\Transformer;
 
-use Doctrine\Common\Annotations\AnnotationReader;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
-use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
+use Symfony\Component\Serializer\Mapping\Loader\AttributeLoader;
 use Symfony\Component\Serializer\NameConverter\MetadataAwareNameConverter;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -30,7 +29,7 @@ class Transformer
     {
         if (is_null(static::$instance)) {
             $encoders = [new JsonEncoder()];
-            $classMetadataFactory = new ClassMetadataFactory(new AnnotationLoader(new AnnotationReader()));
+            $classMetadataFactory = new ClassMetadataFactory(new AttributeLoader());
             $metadataAwareNameConverter = new MetadataAwareNameConverter($classMetadataFactory);
             $propertyAccessor = new ReflectionExtractor();
             $normalizers = [
