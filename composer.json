@@ -1,6 +1,6 @@
 {
   "name": "ufo-tech/rpc-objects",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Component for UFO-Tech RPC Library",
   "license": "MIT",
   "authors": [
@@ -15,7 +15,7 @@
     "php": ">=8.2",
     "ufo-tech/rpc-exceptions": "*",
     "symfony/serializer": "*",
-    "symfony/validator": "^6.4",
+    "symfony/validator": "^7.0",
     "symfony/http-client": "*",
     "symfony/property-access": "*"
   },
