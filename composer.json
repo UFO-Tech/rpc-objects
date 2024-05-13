@@ -10,12 +10,12 @@
     }
   ],
   "type": "component",
-  "homepage": "https://github.com/ufo-tech/rpc-objects",
+  "homepage": "https://docs.ufo-tech.space/bin/view/docs/JsonRpcBundle/?language=en",
   "require": {
     "php": ">=8.2",
     "ufo-tech/rpc-exceptions": "*",
     "symfony/serializer": "*",
-    "symfony/validator": "*",
+    "symfony/validator": "^6.4",
     "symfony/http-client": "*",
     "symfony/property-access": "*"
   },
