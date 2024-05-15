@@ -32,6 +32,7 @@ class RpcValidator
         string $procedureMethod,
         array $params
     ): void {
+        $this->clearPrev();
         $refMethod = new ReflectionMethod($procedureObject, $procedureMethod);
         $paramRefs = $refMethod->getParameters();
         foreach ($paramRefs as $paramRef) {
@@ -46,6 +47,12 @@ class RpcValidator
             }
             throw new ConstraintsImposedException("Invalid Data for call method: {$procedureMethod}", $errors);
         }
+    }
+
+    protected function clearPrev(): void
+    {
+        $this->violations = [];
+        $this->violationCount = 0;
     }
 
     protected function validateParam(ReflectionParameter $paramRef, mixed $value): void
