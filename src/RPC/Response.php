@@ -32,6 +32,7 @@ class Response
         }
         $ref = new \ReflectionClass($this->dto);
         $this->responseFormat = [];
+        $this->responseFormat['$dto'] = $ref->getShortName();
         foreach ($ref->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
             $nullable = ($property->getType()->allowsNull()) ? '?' : '';
             $this->responseFormat[$property->getName()] = $nullable.$property->getType()->getName();

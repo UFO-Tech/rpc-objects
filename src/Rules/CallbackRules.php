@@ -12,15 +12,10 @@ class CallbackRules
         return [
             new Assert\NotBlank(),
             new Assert\Url(),
-            new Assert\Url(
-                message: 'Must have a protocol',
-                relativeProtocol: true,
-            ),
-            new Assert\Url(
-                message: 'Invalid protocol',
-                protocols: ['https'],
-            ),
+            new Assert\Url(message: 'Must have a protocol', relativeProtocol: true,),
+            new Assert\Url(message: 'Invalid protocol', protocols: ['http'],),
             new AssertRealUrl(message: 'Callback does not respond'),
         ];
     }
+
 }
