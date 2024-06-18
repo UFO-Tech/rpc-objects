@@ -22,7 +22,7 @@ class RpcResponse
         #[Groups([self::IS_RESULT, self::IS_ERROR])]
         protected string|int $id,
         #[Groups([self::IS_RESULT])]
-        protected mixed $result = [],
+        protected string|int|float|bool|array|object|null $result = [],
         #[Groups([self::IS_ERROR])]
         protected ?RpcError $error = null,
         #[Groups([self::IS_RESULT, self::IS_ERROR])]
@@ -45,9 +45,9 @@ class RpcResponse
     }
 
     /**
-     * @return array|string
+     * @return string|int|float|bool|array|object|null
      */
-    public function getResult(): mixed
+    public function getResult(): string|int|float|bool|array|object|null
     {
         return match (gettype($r = $this->result)) {
             'object' => $this->normalizeResult($r),
