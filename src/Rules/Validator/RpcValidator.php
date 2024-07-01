@@ -42,7 +42,7 @@ class RpcValidator
             $errors = [];
             foreach ($this->violations as $paramName => $violations) {
                 array_map(function (ConstraintViolationInterface $v) use (&$errors, $paramName) {
-                    $errors[$paramName][] = $v->getMessage();
+                    $errors[$paramName . $v->getPropertyPath()][] = $v->getMessage();
                 }, (array)$violations->getIterator());
             }
             throw new ConstraintsImposedException("Invalid Data for call method: {$procedureMethod}", $errors);
