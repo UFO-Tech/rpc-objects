@@ -20,10 +20,7 @@ final readonly class Assertions
     {
         $array = [];
         foreach ($this->assertions as $assertion) {
-            $array[] = [
-                'class'   => $assertion::class,
-                'context' => Transformer::getDefault()->normalize($assertion),
-            ];
+            $array[] = Transformer::getDefault()->normalize($assertion);
         }
 
         return $array;
