@@ -8,8 +8,11 @@ use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
 use Symfony\Component\Serializer\Mapping\Loader\AttributeLoader;
 use Symfony\Component\Serializer\NameConverter\MetadataAwareNameConverter;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\SerializerAwareInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class Transformer
@@ -32,9 +35,15 @@ class Transformer
             $classMetadataFactory = new ClassMetadataFactory(new AttributeLoader());
             $metadataAwareNameConverter = new MetadataAwareNameConverter($classMetadataFactory);
             $propertyAccessor = new ReflectionExtractor();
+            $objectNormaliser = new ObjectNormalizer(
+                $classMetadataFactory,
+                $metadataAwareNameConverter,
+                propertyTypeExtractor: $propertyAccessor
+            );
             $normalizers = [
+                new ConstraintObjectNormalizer($objectNormaliser),
                 new DateTimeNormalizer(),
-                new ObjectNormalizer($classMetadataFactory, $metadataAwareNameConverter, propertyTypeExtractor: $propertyAccessor),
+                $objectNormaliser,
             ];
             static::$instance = new static(new Serializer($normalizers, $encoders));
         }
