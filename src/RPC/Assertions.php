@@ -9,18 +9,21 @@ use Ufo\RpcObject\Transformer\Transformer;
 #[Attribute(Attribute::TARGET_PARAMETER)]
 final readonly class Assertions
 {
+    public string $constructorArgs;
     /**
      * @param Constraint[] $assertions
      */
     public function __construct(
-        public array $assertions
+        readonly public array $assertions
     ) {}
 
     public function toArray(): array
     {
-        $array = [];
+        $array = [
+            'constructor' => $this->constructorArgs,
+        ];
         foreach ($this->assertions as $assertion) {
-            $array[] = Transformer::getDefault()->normalize($assertion);
+            $array['payload'][] = Transformer::getDefault()->normalize($assertion);
         }
 
         return $array;

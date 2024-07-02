@@ -2,6 +2,11 @@
 
 namespace Ufo\RpcObject\RPC;
 
+use ReflectionException;
+use ReflectionMethod;
+use ReflectionParameter;
+use Ufo\RpcObject\Transformer\AttributeHelper;
+
 use function array_map;
 
 class AssertionsCollection
@@ -28,5 +33,32 @@ class AssertionsCollection
         return array_map(function (Assertions $a) {
             return $a->toArray();
         }, $this->collection);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function fillAssertion(
+        string $className,
+        ReflectionMethod $method,
+        ReflectionParameter $paramRef
+    ): void {
+        $attrArguments = AttributeHelper::getMethodArgumentAttributesAsString(
+            $className,
+            $method->getName(),
+            $paramRef->getName()
+        );
+
+        $assertions = $paramRef->getAttributes(Assertions::class)[0]->newInstance();
+
+        (new \ReflectionObject($assertions))
+            ->getProperty('constructorArgs')
+            ->setValue($assertions, $attrArguments)
+        ;
+
+        $this->addAssertions(
+            $paramRef->getName(),
+            $assertions
+        );
     }
 }

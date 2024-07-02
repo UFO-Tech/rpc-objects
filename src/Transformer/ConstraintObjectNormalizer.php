@@ -39,18 +39,9 @@ class ConstraintObjectNormalizer implements NormalizerInterface, DenormalizerInt
         array $context = []
     ): array|string|int|float|bool|\ArrayObject|null
     {
-        $protoContext = $this->normalizer->normalize($object, $format, $context);
-        $refObject = new \ReflectionObject($object);
-        $constructorParams = $refObject->getConstructor()->getParameters();
-        $context = [];
-        foreach ($constructorParams as $constructorParam) {
-            if (isset($protoContext[$constructorParam->getName()])) {
-                $context[$constructorParam->getName()] = $protoContext[$constructorParam->getName()];
-            }
-        }
         return [
             'class' => $object::class,
-            'context' => $context
+            'context' => $this->normalizer->normalize($object, $format, $context)
         ];
     }
 
