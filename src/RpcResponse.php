@@ -6,6 +6,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\Ignore;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Serializer\SerializerInterface;
+use Ufo\JsonRpcBundle\Serializer\RpcResponseContextBuilder;
 use Ufo\RpcError\AbstractRpcErrorException;
 use Ufo\RpcError\WrongWayException;
 use Ufo\RpcObject\RPC\Cache;
@@ -16,7 +17,10 @@ class RpcResponse
     const IS_RESULT = 'result';
     const IS_ERROR = 'error';
 
+    #[Ignore]
     protected SerializerInterface $transformer;
+    #[Ignore]
+    protected RpcResponseContextBuilder $contextBuilder;
 
     public function __construct(
         #[Groups([self::IS_RESULT, self::IS_ERROR])]
@@ -32,7 +36,9 @@ class RpcResponse
         protected ?RpcRequest $requestObject = null,
         #[Ignore]
         protected ?Cache $cache = null,
+        ?RpcResponseContextBuilder $contextBuilder = null
     ) {
+        $this->contextBuilder = $contextBuilder ?? new RpcResponseContextBuilder();
         $this->transformer = Transformer::getDefault();
     }
 
@@ -64,7 +70,7 @@ class RpcResponse
 
     protected function normalizeResult(object $result): array
     {
-        return $this->transformer->normalize($result, context: []);
+        return $this->transformer->normalize($result, context: $this->contextBuilder->toArray());
     }
 
     /**
