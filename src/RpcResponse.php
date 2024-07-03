@@ -16,6 +16,14 @@ class RpcResponse
 {
     const IS_RESULT = 'result';
     const IS_ERROR = 'error';
+    const IS_LIST = 'list';
+    const IS_DETAIL = 'detail';
+
+    const IS_GROUP = 'group';
+    const IS_GROUP_2 = 'group_2';
+    const IS_GROUP_3 = 'group_3';
+    const IS_GROUP_4 = 'group_4';
+    const IS_GROUP_5 = 'group_5';
 
     #[Ignore]
     protected SerializerInterface $transformer;
