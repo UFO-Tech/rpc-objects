@@ -7,10 +7,13 @@ use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
 use Symfony\Component\Serializer\Mapping\Loader\AttributeLoader;
 use Symfony\Component\Serializer\NameConverter\MetadataAwareNameConverter;
-use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
-use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
-use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Normalizer\{
+    DateTimeNormalizer,
+    DenormalizerInterface,
+    NormalizerInterface,
+    UidNormalizer,
+    ObjectNormalizer
+};
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerAwareInterface;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -43,6 +46,7 @@ class Transformer
             $normalizers = [
                 new ConstraintObjectNormalizer($objectNormaliser),
                 new DateTimeNormalizer(),
+                new UidNormalizer(),
                 $objectNormaliser,
             ];
             static::$instance = new static(new Serializer($normalizers, $encoders));
