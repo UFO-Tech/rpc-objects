@@ -78,7 +78,7 @@ class RpcResponse
 
     protected function normalizeResult(object $result): array
     {
-        return $this->transformer->normalize($result, context: $this->contextBuilder->toArray());
+        return $this->transformer->normalize($result, context: $this->contextBuilder->removeParent()->toArray());
     }
 
     /**
