@@ -18,8 +18,8 @@ class ResponseCreator
         $responseArray = $serializer->decode($json, 'json');
 
         try {
-            if (isset($responseArray['error'])) {
-                throw AbstractRpcErrorException::fromCode($responseArray['error']['code'], $responseArray['error']['message']);
+            if (isset($responseArray[RpcResponse::IS_ERROR])) {
+                throw AbstractRpcErrorException::fromCode($responseArray[RpcResponse::IS_ERROR]['code'], $responseArray[RpcResponse::IS_ERROR]['message']);
             }
             $response = $serializer->denormalize($responseArray, RpcResponse::class);
         } catch (\Throwable $e) {

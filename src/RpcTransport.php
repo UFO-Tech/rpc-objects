@@ -22,9 +22,16 @@ final readonly class RpcTransport implements \Stringable
 
     public static function fromArray(array $parts): self
     {
-        return new self($parts['scheme'] ?? null, $parts['user'] ?? null, $parts['pass'] ?? null,
-            $parts['host'] ?? null, isset($parts['port']) ? (int)$parts['port'] : null, $parts['path'] ?? null,
-            $parts['query'] ?? null, $parts['fragment'] ?? null);
+        return new self(
+            $parts['scheme'] ?? null,
+            $parts['user'] ?? null,
+            $parts['pass'] ?? null,
+            $parts['host'] ?? null,
+            isset($parts['port']) ? (int)$parts['port'] : null,
+            $parts['path'] ?? null,
+            $parts['query'] ?? null,
+            $parts['fragment'] ?? null
+        );
     }
 
     public static function fromDsn(string $dsn): self

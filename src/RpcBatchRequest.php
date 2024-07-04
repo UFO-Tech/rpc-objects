@@ -98,13 +98,16 @@ class RpcBatchRequest
         return $this;
     }
 
-    protected function refreshQueue(string|int $id)
+    protected function refreshQueue(string|int $id): void
     {
         foreach ($this->waitForOtherResponse as $queueId => $requestObject) {
             if ($requestObject->checkRequireId($id)) {
-                foreach ($requestObject->getRequire() as $paramName => $rrrpfr) {
+                foreach ($requestObject->getRequire() as $paramName => $requestRequire) {
                     try {
-                        if (!isset($this->results[$id]['result'])) {
+                        if ($requestRequire->getResponseId() != $id) {
+                            continue;
+                        }
+                        if (!isset($this->results[$id][RpcResponse::IS_RESULT])) {
                             throw new RpcBadRequestException(
                                 sprintf(
                                     'The parent\'s request "%s" returned the error. I can\'t substitute values in the current request.',
@@ -112,19 +115,22 @@ class RpcBatchRequest
                                 )
                             );
                         }
-                        if (!isset($this->results[$id]['result'][$rrrpfr->getResponseFieldName()])) {
+                        $responseField = $requestRequire->getResponseFieldName();
+                        $responseResult = $this->results[$id][RpcResponse::IS_RESULT];
+
+                        if (
+                            !empty($responseField)
+                            && !isset($responseResult[$responseField])
+                        ) {
                             throw new RpcBadRequestException(
                                 sprintf(
                                     'The parent request "%s" does not have a "%s" field in the response. I can\'t substitute value "%s" in the current request.',
-                                    $id, $rrrpfr->getResponseFieldName(), $paramName
+                                    $id, $responseField, $paramName
                                 )
                             );
                         }
-                        if ($rrrpfr->getResponseId() != $id) {
-                            continue;
-                        }
-                        
-                        $newValue = $this->results[$id]['result'][$rrrpfr->getResponseFieldName()];
+
+                        $newValue = (!empty($responseField)) ? $responseResult[$responseField] : $responseResult;
                         $requestObject->replaceRequestParam($paramName, $newValue);
                         $this->changeQueue($requestObject);
                     } catch (\Throwable $e) {

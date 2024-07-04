@@ -86,20 +86,19 @@ class RpcRequest
         if ($this->hasParams()
             && $matched = preg_grep('/^\@FROM\:/i', array_filter($this->getParams(), 'is_scalar'))
         ) {
-            $self = $this;
-            array_walk($matched, function ($value, $paramName) use ($self) {
+            array_walk($matched, function ($value, $paramName) {
                 $data = [];
-                preg_match('/^\@FROM\:(\w+)\((\w+)\)$/i', $value, $data);
+                preg_match('/^\@FROM\:(\w+)\((\w*)\)$/i', $value, $data);
                 $requireRequestId = &$data[1];
                 $requireFieldName = &$data[2];
-                $self->require[$paramName] = new RpcRequestRequire($requireRequestId, $requireFieldName);
-                $self->requireIds[$requireRequestId] = $self->requireIds[$requireRequestId] ?? 0;
-                $self->requireIds[$requireRequestId]++;
+                $this->require[$paramName] = new RpcRequestRequire($requireRequestId, $requireFieldName);
+                $this->requireIds[$requireRequestId] = $this->requireIds[$requireRequestId] ?? 0;
+                $this->requireIds[$requireRequestId]++;
             });
         }
     }
 
-    protected function clearRequire()
+    protected function clearRequire(): void
     {
         $this->require = [];
         $this->requireIds = [];
@@ -293,7 +292,7 @@ class RpcRequest
         }
     }
 
-    public function refreshRawJson(SerializerInterface $serializer, array $context = [])
+    public function refreshRawJson(SerializerInterface $serializer, array $context = []): void
     {
         $context = array_merge([
             AbstractNormalizer::GROUPS => [static::S_GROUP]
