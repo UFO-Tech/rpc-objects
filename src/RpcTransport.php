@@ -64,6 +64,22 @@ final readonly class RpcTransport implements \Stringable
 
     public function __toString(): string
     {
+        $url = $this->getDomainUrl();
+        if ($this->path) {
+            $url .= $this->path;
+        }
+        if ($this->query) {
+            $url .= '?'.$this->query;
+        }
+        if ($this->fragment) {
+            $url .= '#'.$this->fragment;
+        }
+
+        return $url;
+    }
+
+    public function getDomainUrl(): string
+    {
         $url = '';
         if ($this->scheme) {
             $url .= $this->scheme.'://';
@@ -81,16 +97,6 @@ final readonly class RpcTransport implements \Stringable
         if ($this->port) {
             $url .= ':'.$this->port;
         }
-        if ($this->path) {
-            $url .= $this->path;
-        }
-        if ($this->query) {
-            $url .= '?'.$this->query;
-        }
-        if ($this->fragment) {
-            $url .= '#'.$this->fragment;
-        }
-
         return $url;
     }
 
