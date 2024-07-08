@@ -44,18 +44,21 @@ class RpcRequest
     #[Ignore]
     protected ?RpcResponse $responseObject = null;
 
+    /**
+     * @throws AbstractRpcErrorException
+     */
     public function __construct(
         #[Groups([self::S_GROUP])]
         protected string|int $id,
         #[Groups([self::S_GROUP])]
-        protected string     $method,
+        protected string $method,
         #[Ignore]
-        protected array      $params = [],
+        protected array $params = [],
         #[Groups([self::S_GROUP])]
         #[SerializedName('jsonrpc')]
-        protected string     $version = self::DEFAULT_VERSION,
+        protected string $version = self::DEFAULT_VERSION,
         #[Ignore]
-        protected ?string    $rawJson = null
+        protected ?string $rawJson = null
     )
     {
         $this->validate();
@@ -74,7 +77,7 @@ class RpcRequest
         Validator::validate($this->params, RequestRules::assertParams())->throw();
     }
 
-    protected function analyzeParams()
+    protected function analyzeParams(): void
     {
         if (empty($this->id)) {
             $this->id = uniqid();
@@ -163,6 +166,7 @@ class RpcRequest
             $ref = new \ReflectionClass(static::class);
             $object = $ref->newInstanceWithoutConstructor();
             $ref->getProperty('id')->setValue($object, $data['id'] ?? uniqid());
+            $ref->getProperty('method')->setValue($object, $data['method'] ?? uniqid());
             $ref->getProperty('version')->setValue($object, $data['jsonrpc'] ?? RpcRequest::DEFAULT_VERSION);
         }
 

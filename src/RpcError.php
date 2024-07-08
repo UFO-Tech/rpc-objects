@@ -45,4 +45,9 @@ class RpcError
         return $this->data;
     }
 
+    public static function fromThrowable(\Throwable $e): static
+    {
+        return new static($e->getCode(), $e->getMessage(), $e);
+    }
+
 }

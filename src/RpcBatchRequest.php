@@ -31,7 +31,7 @@ class RpcBatchRequest
     public static function fromJson(string $json): static
     {
         try {
-            $data = json_decode($json, true);
+            $data = json_decode($json, true) ?? throw new RpcJsonParseException('Invalid batch JSON format');
             $collection = new static();
             foreach ($data as $requestArray) {
                 $collection->addRequestObject(RpcRequest::fromArray($requestArray));

@@ -13,7 +13,7 @@ class CallbackRules
             new Assert\NotBlank(),
             new Assert\Url(),
             new Assert\Url(message: 'Must have a protocol', relativeProtocol: true,),
-            new Assert\Url(message: 'Invalid protocol', protocols: ['http'],),
+            new Assert\Url(message: 'Invalid protocol', protocols: ['http', 'https'], relativeProtocol: true),
             new AssertRealUrl(message: 'Callback does not respond'),
         ];
     }
