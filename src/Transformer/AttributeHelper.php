@@ -21,7 +21,7 @@ class AttributeHelper
         $methodContent = implode("", array_slice($fileContent, $startLine - 1, $endLine - $startLine + 1));
 
         preg_match(
-            '/(?<=\#\[RPC\\\\Assertions\(\[)[\w\s_\\\\(\),"\'=>\[\]]*\s?(?=\]\)\]\s*[\w?|]+\s\$'.$argumentName.',?)/m',
+            '/(?<=\#\[RPC\\\\Assertions\(\[)(?:(?!\#\[RPC\\\\Assertions).)*?(?=\]\)\]\s*[\w?|]+\s\$'.$argumentName.',?)/ms',
             $methodContent,
             $matches
         );

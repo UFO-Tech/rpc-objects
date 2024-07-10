@@ -8,12 +8,12 @@ use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
 use Symfony\Component\Serializer\Mapping\Loader\AttributeLoader;
 use Symfony\Component\Serializer\NameConverter\MetadataAwareNameConverter;
 use Symfony\Component\Serializer\Normalizer\{
+    ArrayDenormalizer,
     DateTimeNormalizer,
     DenormalizerInterface,
     NormalizerInterface,
     UidNormalizer,
-    ObjectNormalizer
-};
+    ObjectNormalizer};
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerAwareInterface;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -44,6 +44,7 @@ class Transformer
                 propertyTypeExtractor: $propertyAccessor
             );
             $normalizers = [
+                new ArrayDenormalizer(),
                 new ConstraintObjectNormalizer($objectNormaliser),
                 new DateTimeNormalizer(),
                 new UidNormalizer(),

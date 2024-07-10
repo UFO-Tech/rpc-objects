@@ -5,12 +5,14 @@ namespace Ufo\RpcObject\RPC;
 use Attribute;
 use Ufo\RpcError\RpcInternalException;
 
+use function implode;
+
 #[Attribute(Attribute::TARGET_METHOD)]
 class Response
 {
-    const STRING = 'string';
-    const INT = 'int';
-    const BOOL = 'bool';
+    const string STRING = 'string';
+    const string INT = 'int';
+    const string BOOL = 'bool';
 
     /**
      * @throws RpcInternalException
@@ -35,7 +37,15 @@ class Response
         $this->responseFormat['$dto'] = $ref->getShortName();
         foreach ($ref->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
             $nullable = ($property->getType()->allowsNull()) ? '?' : '';
-            $this->responseFormat[$property->getName()] = $nullable.$property->getType()->getName();
+            try {
+                $this->responseFormat[$property->getName()] = $nullable.$property->getType()->getName();
+            } catch (\Throwable) {
+                $t = [];
+                foreach ($property->getType()->getTypes() as $type) {
+                    $t[] = $type->getName();
+                }
+                $this->responseFormat[$property->getName()] = implode('|', $t);
+            }
         }
         if ($this->collection) {
             $this->responseFormat = [$this->responseFormat];
@@ -50,4 +60,13 @@ class Response
         return $this->responseFormat;
     }
 
+    public function getDto(): string
+    {
+        return $this->dto;
+    }
+
+    public function isCollection(): bool
+    {
+        return $this->collection;
+    }
 }

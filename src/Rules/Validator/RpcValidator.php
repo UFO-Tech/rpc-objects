@@ -7,7 +7,6 @@ use ReflectionParameter;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Ufo\JsonRpcBundle\Interfaces\IRpcValidator;
 use Ufo\RpcObject\RPC\Assertions;
 
 use function array_map;
@@ -25,7 +24,7 @@ class RpcValidator
     public function __construct(protected ValidatorInterface $validator) {}
 
     /**
-     * @throws ConstraintsImposedException
+     * @throws ConstraintsImposedException|\ReflectionException
      */
     public function validateMethodParams(
         object $procedureObject,

@@ -14,7 +14,7 @@ class CallbackObject
         $this->validate();
     }
 
-    protected function validate()
+    protected function validate(): void
     {
         $validator = Validator::validate($this->target, CallbackRules::assertUrl());
 
