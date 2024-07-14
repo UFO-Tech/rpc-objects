@@ -7,6 +7,9 @@ use Ufo\RpcError\RpcInternalException;
 
 use function implode;
 
+/**
+ * @deprecated Wil be removed on 3.0. Use Ufo\RpcObject\RPC\ResultAsDTO. See https://docs.ufo-tech.space/bin/view/docs/JsonRpcBundle/add_rpc_service/resultAsDTO/?language=en
+ */
 #[Attribute(Attribute::TARGET_METHOD)]
 class Response
 {

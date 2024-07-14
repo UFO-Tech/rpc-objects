@@ -3,6 +3,7 @@
 namespace Ufo\RpcObject\Helpers;
 
 use function array_map;
+use function class_exists;
 use function implode;
 use function is_array;
 use function is_string;
@@ -46,6 +47,11 @@ enum TypeHintResolver: string
         };
     }
 
+    public static function isRealClass(string $value): bool
+    {
+        return TypeHintResolver::normalize($value) === TypeHintResolver::OBJECT->value && class_exists($value);
+    }
+
     public static function jsonSchemaToPhp(array|string $type): string
     {
         if (is_array($type)) {
@@ -64,18 +70,8 @@ enum TypeHintResolver: string
         };
     }
 
-    public static function phpToJsonSchema(string|array $phpType): string|array
+    public static function phpToJsonSchema(array|string $phpType): string
     {
-        if (is_string($phpType) && str_contains($phpType, '|')) {
-            $phpType = explode('|', $phpType);
-        }
-        if (is_array($phpType)) {
-            $types = [];
-            foreach ($phpType as $type) {
-                $types[] = [self::TYPE => self::phpToJsonSchema($type)];
-            }
-            return $types;
-        }
         return match ($phpType) {
             self::MIXED->value => '',
             self::FLOAT->value => self::NUMBER->value,
