@@ -2,7 +2,11 @@
 
 namespace Ufo\RpcObject\Transformer;
 
+use Symfony\Component\PropertyInfo\Extractor\ConstructorExtractor;
+use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
+use Symfony\Component\PropertyInfo\Extractor\SerializerExtractor;
+use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
 use Symfony\Component\Serializer\Mapping\Loader\AttributeLoader;
@@ -34,22 +38,33 @@ class Transformer
     public static function getDefault(): SerializerInterface
     {
         if (is_null(static::$instance)) {
-            $encoders = [new JsonEncoder()];
+            $encoders = ['json' => new JsonEncoder()];
             $classMetadataFactory = new ClassMetadataFactory(new AttributeLoader());
             $metadataAwareNameConverter = new MetadataAwareNameConverter($classMetadataFactory);
-            $propertyAccessor = new ReflectionExtractor();
+
+            $phpDocExtractor = new PhpDocExtractor();
+            $propertyInfoExtractor = new PropertyInfoExtractor(
+                typeExtractors: [
+                    new ConstructorExtractor([$phpDocExtractor]),
+                    $phpDocExtractor,
+                    new ReflectionExtractor(),
+                    new SerializerExtractor($classMetadataFactory),
+                ],
+            );
+
             $objectNormaliser = new ObjectNormalizer(
                 $classMetadataFactory,
                 $metadataAwareNameConverter,
-                propertyTypeExtractor: $propertyAccessor
+                propertyTypeExtractor: $propertyInfoExtractor,
             );
             $normalizers = [
+                $objectNormaliser,
                 new ArrayDenormalizer(),
                 new ConstraintObjectNormalizer($objectNormaliser),
                 new DateTimeNormalizer(),
                 new UidNormalizer(),
-                $objectNormaliser,
             ];
+
             static::$instance = new static(new Serializer($normalizers, $encoders));
         }
         return static::$instance->getSerializer();
