@@ -59,6 +59,7 @@ class Transformer
             );
             $normalizers = [
                 $objectNormaliser,
+                new AssociativeArrayDenormalizer(),
                 new ArrayDenormalizer(),
                 new ConstraintObjectNormalizer($objectNormaliser),
                 new DateTimeNormalizer(),
