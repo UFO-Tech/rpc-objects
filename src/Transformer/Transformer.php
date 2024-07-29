@@ -57,10 +57,11 @@ class Transformer
                 $metadataAwareNameConverter,
                 propertyTypeExtractor: $propertyInfoExtractor,
             );
+            $arrayDenormalizer = new ArrayDenormalizer();
             $normalizers = [
                 $objectNormaliser,
-                new AssociativeArrayDenormalizer(),
-                new ArrayDenormalizer(),
+                new AssociativeArrayDenormalizer($objectNormaliser),
+                $arrayDenormalizer,
                 new ConstraintObjectNormalizer($objectNormaliser),
                 new DateTimeNormalizer(),
                 new UidNormalizer(),

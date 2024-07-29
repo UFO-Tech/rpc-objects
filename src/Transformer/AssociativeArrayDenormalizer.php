@@ -2,11 +2,16 @@
 
 namespace Ufo\RpcObject\Transformer;
 
+use Symfony\Component\PropertyInfo\Type;
 use Symfony\Component\Serializer\Exception\InvalidArgumentException;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
 class AssociativeArrayDenormalizer implements DenormalizerInterface
 {
+    public function __construct(protected DenormalizerInterface $denormalizer)
+    {
+    }
+
     public function supportsDenormalization($data, $type, $format = null, array $context = []): bool
     {
         return is_array($data) && $this->isAssociativeArray($data);
@@ -26,8 +31,15 @@ class AssociativeArrayDenormalizer implements DenormalizerInterface
 
         $result = [];
         foreach ($data as $key => $value) {
-            $result[$key] = $value;
+            if (is_array($value) && isset($context['value_type'])) {
+                /** @var Type $valueType */
+                $valueType = $context['value_type'];
+                $result[$key] = $this->denormalizer->denormalize($value, $valueType->getClassName(), $format, $context);
+            } else {
+                $result[$key] = $value;
+            }
         }
+
 
         return $result;
     }
