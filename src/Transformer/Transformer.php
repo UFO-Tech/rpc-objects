@@ -59,12 +59,12 @@ class Transformer
             );
             $arrayDenormalizer = new ArrayDenormalizer();
             $normalizers = [
+                new DateTimeNormalizer(),
+                new UidNormalizer(),
+                new ConstraintObjectNormalizer($objectNormaliser),
                 $objectNormaliser,
                 new AssociativeArrayDenormalizer($objectNormaliser),
                 $arrayDenormalizer,
-                new ConstraintObjectNormalizer($objectNormaliser),
-                new DateTimeNormalizer(),
-                new UidNormalizer(),
             ];
 
             static::$instance = new static(new Serializer($normalizers, $encoders));
