@@ -23,6 +23,8 @@ use Ufo\RpcObject\Rules\RequestRules;
 use Ufo\RpcObject\Rules\Validator\Validator;
 use Ufo\RpcObject\Transformer\Transformer;
 
+use function uniqid;
+
 class RpcRequest
 {
     const S_GROUP = 'raw';
@@ -168,6 +170,7 @@ class RpcRequest
             $ref->getProperty('id')->setValue($object, $data['id'] ?? uniqid());
             $ref->getProperty('method')->setValue($object, $data['method'] ?? uniqid());
             $ref->getProperty('version')->setValue($object, $data['jsonrpc'] ?? RpcRequest::DEFAULT_VERSION);
+            $ref->getProperty('params')->setValue($object, $data['params'] ?? []);
         }
 
         try {
