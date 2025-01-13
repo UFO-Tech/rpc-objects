@@ -43,11 +43,17 @@ class DTOTransformer
         $reflection = new ReflectionClass($classFQCN);
 
         $instance = $reflection->newInstanceWithoutConstructor();
-        foreach ($data as $key => $value) {
-            if ($reflection->hasProperty($key)) {
-                $property = $reflection->getProperty($key);
-                $property->setValue($instance, $value);
+        foreach ($reflection->getProperties() as $property) {
+            $key = $property->getName();
+
+            if (!isset($data[$key])) {
+                if (!$property->hasDefaultValue()) {
+                    throw new \InvalidArgumentException("Missing required key: '$key'");
+                }
+                continue;
             }
+
+            $property->setValue($instance, $data[$key]);
         }
 
         return $instance;
