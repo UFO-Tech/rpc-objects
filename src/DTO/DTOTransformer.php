@@ -20,7 +20,11 @@ class DTOTransformer
         $array = [];
 
         foreach ($properties as $property) {
-            $array[$property->getName()] = $property->getValue($dto);
+            $value = $property->getValue($dto);
+            if ($value instanceof IArrayConvertible) {
+                $value = $value->toArray();
+            }
+            $array[$property->getName()] = $value;
         }
 
         return $array;
