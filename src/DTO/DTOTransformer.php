@@ -5,6 +5,8 @@ namespace Ufo\RpcObject\DTO;
 use ReflectionClass;
 use ReflectionException;
 
+use function is_null;
+
 class DTOTransformer
 {
     /**
@@ -46,7 +48,7 @@ class DTOTransformer
         foreach ($reflection->getProperties() as $property) {
             $key = $property->getName();
 
-            if (!($data[$key] ?? false)) {
+            if (!isset($data[$key]) && !is_null($data[$key])) {
                 if (!$property->hasDefaultValue()) {
                     throw new \InvalidArgumentException("Missing required key: '$key'");
                 }
