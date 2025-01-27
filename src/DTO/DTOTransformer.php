@@ -46,7 +46,7 @@ class DTOTransformer
         foreach ($reflection->getProperties() as $property) {
             $key = $property->getName();
 
-            if (!isset($data[$key])) {
+            if (!($data[$key] ?? false)) {
                 if (!$property->hasDefaultValue()) {
                     throw new \InvalidArgumentException("Missing required key: '$key'");
                 }
