@@ -1,12 +1,16 @@
 {
   "name": "ufo-tech/rpc-objects",
-  "version": "2.7.2",
+  "version": "2.7.3",
   "description": "Component for UFO-Tech RPC Library",
   "license": "MIT",
   "authors": [
     {
       "name": "Alex Maystrenko",
       "email": "ashterix69@gmail.com"
+    },
+    {
+      "name" : "Maksym Trofimov",
+      "email" : "makx.work@gmail.com"
     }
   ],
   "type": "component",
