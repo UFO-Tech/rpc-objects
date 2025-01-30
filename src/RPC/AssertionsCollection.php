@@ -49,6 +49,7 @@ class AssertionsCollection
             $paramRef->getName()
         );
 
+        if(empty($paramRef->getAttributes(Assertions::class))) return;
         $assertions = $paramRef->getAttributes(Assertions::class)[0]->newInstance();
 
         (new \ReflectionObject($assertions))
