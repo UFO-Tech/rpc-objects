@@ -11,6 +11,6 @@ trait ArrayConstructibleTrait
      */
     public static function fromArray(array $data): self
     {
-        return DTOTransformer::fromArray(self::class, $data);
+        return DTOTransformer::fromArray(static::class, $data);
     }
 }
