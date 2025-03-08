@@ -2,8 +2,13 @@
 
 namespace Ufo\RpcObject\DTO;
 
+use InvalidArgumentException;
 use ReflectionClass;
+use ReflectionProperty;
 use ReflectionException;
+use Ufo\RpcError\RpcBadParamException;
+use Ufo\RpcObject\RPC\Assertions;
+use Ufo\RpcObject\Rules\Validator\Validator;
 
 use function is_null;
 
@@ -38,13 +43,13 @@ class DTOTransformer
      * @param string $classFQCN The name of the class to instantiate.
      * @param array $data The array of data to populate the object.
      * @return object The created object.
-     * @throws ReflectionException
+     * @throws ReflectionException|InvalidArgumentException|RpcBadParamException
      */
     public static function fromArray(string $classFQCN, array $data): object
     {
         $reflection = new ReflectionClass($classFQCN);
-
         $instance = $reflection->newInstanceWithoutConstructor();
+
         foreach ($reflection->getProperties() as $property) {
             $key = $property->getName();
 
@@ -55,9 +60,29 @@ class DTOTransformer
                 continue;
             }
 
+            self::validateProperty($property, $data[$key]);
+
             $property->setValue($instance, $data[$key]);
         }
 
         return $instance;
+    }
+
+    /**
+     * @throws RpcBadParamException
+     */
+    private static function validateProperty(ReflectionProperty $property, mixed $value): void
+    {
+        $attributes = $property->getAttributes(Assertions::class);
+
+        if (!empty($attributes)) {
+            $assertions = $attributes[0]->newInstance()->assertions;
+            $validator = Validator::validate($value, $assertions);
+
+            if ($validator->hasErrors()) {
+                $errorMessage = $property->getName() .  $validator->getCurrentError();
+                throw new RpcBadParamException($errorMessage);
+            }
+        }
     }
 }
