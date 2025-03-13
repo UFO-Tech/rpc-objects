@@ -14,16 +14,16 @@ use Ufo\RpcObject\Transformer\Transformer;
 
 class RpcResponse
 {
-    const IS_RESULT = 'result';
-    const IS_ERROR = 'error';
-    const IS_LIST = 'list';
-    const IS_DETAIL = 'detail';
+    const string IS_RESULT = 'result';
+    const string IS_ERROR = 'error';
+    const string IS_LIST = 'list';
+    const string IS_DETAIL = 'detail';
 
-    const IS_GROUP = 'group';
-    const IS_GROUP_2 = 'group_2';
-    const IS_GROUP_3 = 'group_3';
-    const IS_GROUP_4 = 'group_4';
-    const IS_GROUP_5 = 'group_5';
+    const string IS_GROUP = 'group';
+    const string IS_GROUP_2 = 'group_2';
+    const string IS_GROUP_3 = 'group_3';
+    const string IS_GROUP_4 = 'group_4';
+    const string IS_GROUP_5 = 'group_5';
 
     #[Ignore]
     protected SerializerInterface $transformer;

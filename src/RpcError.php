@@ -6,7 +6,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 class RpcError
 {
-    const IS_ERROR = 'error';
+    const string IS_ERROR = 'error';
 
     public function __construct(
         #[Groups([self::IS_ERROR])]

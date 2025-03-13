@@ -3,27 +3,18 @@
 namespace Ufo\RpcObject\Rules;
 
 use Ufo\RpcObject\SpecialRpcParams;
+use Ufo\RpcObject\SpecialRpcParamsEnum;
 
 class ParamsSplitter
 {
 
-    protected function __construct(protected array &$params, protected ?SpecialRpcParams $specialParams = null)
-    {
-    }
+    protected function __construct(protected array &$params, protected ?SpecialRpcParams $specialParams = null) {}
 
     public static function split(array &$params): static
     {
-        $specialParams = null;
-        $sp = [];
-        if ($matched = preg_grep('/^\\$rpc\./i', array_keys($params))) {
-            array_walk($matched, function ($v) use (&$sp, &$params) {
-                $sp[$v] = $params[$v];
-                unset($params[$v]);
-            });
-            $specialParams = SpecialRpcParams::fromArray($sp);
-        } else {
-            $specialParams = new SpecialRpcParams();
-        }
+        $sp = $params[SpecialRpcParamsEnum::PREFIX] ?? [];
+        $specialParams = SpecialRpcParamsEnum::fromArray($sp);
+        unset($params[SpecialRpcParamsEnum::PREFIX]);
         return new static($params, $specialParams);
     }
 

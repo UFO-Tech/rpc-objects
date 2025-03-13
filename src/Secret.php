@@ -7,8 +7,8 @@ use Attribute;
 #[Attribute(Attribute::TARGET_PROPERTY)]
 final readonly class Secret
 {
-    const VALUE = '{secret}';
-    const QUERY_PATTERN = '/([\w\d_]*(?:secret|access|token|key)[_\w]*)=((?:\w|\d)+(?=&?))/';
+    const string VALUE = '{secret}';
+    const string QUERY_PATTERN = '/([\w\d_]*(?:secret|access|token|key)[_\w]*)=((?:\w|\d)+(?=&?))/';
 
     public function __construct(public string $pattern = self::QUERY_PATTERN) {}
 

@@ -4,33 +4,28 @@ namespace Ufo\RpcObject\Rules;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as Assert;
+use Ufo\RpcObject\SpecialRpcParamsEnum;
+
+use function method_exists;
+use function strtoupper;
 
 class SpecialParamsRules
 {
-    const PARAMS = [
-        'callback',
-        'timeout'
-    ];
-
     public static function assertAllParams(): array
     {
         $params = [];
-        foreach (static::PARAMS as $param) {
-            $params['$rpc.' . $param] = call_user_func([static::class, 'assert' . strtoupper($param)]);
+        foreach (SpecialRpcParamsEnum::cases() as $param) {
+            $method = 'assert' . strtoupper($param->value);
+            if (!method_exists(self::class, $method)) continue;
+            $params[$param->value] = call_user_func([static::class, $method]);
         }
-
         return $params;
     }
 
     public static function assertAllParamsCollection(): Constraint
     {
-        $params = [];
-        foreach (static::PARAMS as $param) {
-            $params['$rpc.' . $param] = call_user_func([static::class, 'assert' . strtoupper($param)]);
-        }
-        return new Assert\Collection($params);
+        return new Assert\Collection(static::assertAllParams());
     }
-
 
     public static function assertCallback(): Constraint
     {

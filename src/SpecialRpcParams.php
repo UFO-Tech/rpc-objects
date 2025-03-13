@@ -3,37 +3,20 @@
 namespace Ufo\RpcObject;
 
 use Ufo\RpcError\RpcRuntimeException;
-use Ufo\RpcObject\Rules\SpecialParamsRules;
-use Ufo\RpcObject\Rules\Validator\Validator;
 
 class SpecialRpcParams
 {
-    const PREFIX = '$rpc.';
-    /**
-     * Timeout for request. Second
-     */
-    const DEFAULT_TIMEOUT = 10;
-
     protected ?CallbackObject $callbackObject = null;
 
     public function __construct(
         ?string $callbackUrl = null,
-        protected float $timeout = self::DEFAULT_TIMEOUT
+        protected float $timeout = SpecialRpcParamsEnum::DEFAULT_TIMEOUT,
+        protected string|int|null $rayId = null,
     )
     {
         if (is_string($callbackUrl)) {
             $this->callbackObject = new CallbackObject($callbackUrl);
         }
-    }
-
-    public static function fromArray(array $data): static
-    {
-        Validator::validate($data, SpecialParamsRules::assertAllParamsCollection())->throw();
-
-        return new static(
-            $data['$rpc.callback'] ?? null,
-            $data['$rpc.timeout'] ?? static::DEFAULT_TIMEOUT
-        );
     }
 
     /**
@@ -63,10 +46,16 @@ class SpecialRpcParams
 
     public function toArray(): array
     {
-        $o = [self::PREFIX . 'timeout' => $this->timeout];
+        $o = [SpecialRpcParamsEnum::TIMEOUT->value => $this->timeout];
         if ($this->hasCallback()) {
-            $o[self::PREFIX . 'callback'] = $this->getCallbackObject()->getTarget();
+            $o[SpecialRpcParamsEnum::CALLBACK->value] = $this->getCallbackObject()->getTarget();
         }
         return $o;
     }
+
+    public function getRayId(): int|string|null
+    {
+        return $this->rayId;
+    }
+
 }

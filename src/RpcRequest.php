@@ -27,8 +27,8 @@ use function uniqid;
 
 class RpcRequest
 {
-    const S_GROUP = 'raw';
-    const DEFAULT_VERSION = '2.0';
+    const string S_GROUP = 'raw';
+    const string DEFAULT_VERSION = '2.0';
 
     #[Ignore]
     protected ?Throwable $error = null;
@@ -129,7 +129,8 @@ class RpcRequest
     #[SerializedName('params')]
     public function getAllParams(): array
     {
-        return $this->params + $this->getSpecialParams();
+        $this->params[SpecialRpcParamsEnum::PREFIX] = $this->getSpecialParams();
+        return $this->params;
     }
 
     /**
@@ -168,7 +169,7 @@ class RpcRequest
             $ref = new \ReflectionClass(static::class);
             $object = $ref->newInstanceWithoutConstructor();
             $ref->getProperty('id')->setValue($object, $data['id'] ?? uniqid());
-            $ref->getProperty('method')->setValue($object, $data['method'] ?? uniqid());
+            $ref->getProperty('method')->setValue($object, $data['method'] ?? 'noname');
             $ref->getProperty('version')->setValue($object, $data['jsonrpc'] ?? RpcRequest::DEFAULT_VERSION);
             $ref->getProperty('params')->setValue($object, $data['params'] ?? []);
         }
@@ -251,6 +252,7 @@ class RpcRequest
 
     /**
      * @return CallbackObject
+     * @throws RpcRuntimeException|RpcAsyncRequestException
      */
     public function getCallbackObject(): CallbackObject
     {
