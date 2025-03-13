@@ -24,7 +24,7 @@ class SpecialParamsRules
 
     public static function assertAllParamsCollection(): Constraint
     {
-        return new Assert\Collection(static::assertAllParams());
+        return new Assert\Collection(static::assertAllParams(), allowExtraFields: true);
     }
 
     public static function assertCallback(): Constraint
