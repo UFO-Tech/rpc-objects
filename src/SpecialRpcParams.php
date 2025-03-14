@@ -4,7 +4,7 @@ namespace Ufo\RpcObject;
 
 use Ufo\RpcError\RpcRuntimeException;
 
-class SpecialRpcParams implements IRpcSpecialParamHandler
+class SpecialRpcParams
 {
     protected ?CallbackObject $callbackObject = null;
 
@@ -57,10 +57,4 @@ class SpecialRpcParams implements IRpcSpecialParamHandler
     {
         return $this->rayId;
     }
-
-    public function getSpecialParams(): array
-    {
-        return $this->toArray();
-    }
-
 }
