@@ -6,6 +6,7 @@ use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionProperty;
 use ReflectionException;
+use Ufo\RpcObject\Helpers\TypeHintResolver;
 use Ufo\RpcError\RpcBadParamException;
 use Ufo\RpcObject\RPC\Assertions;
 use Ufo\RpcObject\Rules\Validator\Validator;
@@ -28,13 +29,29 @@ class DTOTransformer
 
         foreach ($properties as $property) {
             $value = $property->getValue($dto);
-            if ($value instanceof IArrayConvertible) {
-                $value = $value->toArray();
-            }
+            $value = static::convertValue($value);
             $array[$property->getName()] = $value;
         }
 
         return $array;
+    }
+
+    protected static function convertValue(mixed $value): mixed
+    {
+        return match (gettype($value)) {
+            TypeHintResolver::ARRAY->value => static::mapArrayWithKeys($value),
+            TypeHintResolver::OBJECT->value => $value instanceof IArrayConvertible ? $value->toArray() : static::toArray($value),
+            default => $value,
+        };
+    }
+
+    protected static function mapArrayWithKeys(array $array): array
+    {
+        $result = [];
+        foreach ($array as $k => $v) {
+            $result[$k] = static::convertValue($v);
+        }
+        return $result;
     }
 
     /**
@@ -55,7 +72,7 @@ class DTOTransformer
 
             if (!isset($data[$key]) && !is_null($data[$key])) {
                 if (!$property->hasDefaultValue()) {
-                    throw new \InvalidArgumentException("Missing required key: '$key'");
+                    throw new InvalidArgumentException("Missing required key: '$key'");
                 }
                 continue;
             }
