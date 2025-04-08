@@ -6,7 +6,7 @@ use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionProperty;
 use ReflectionException;
-use Ufo\RpcError\RpcBadParamException;
+use Ufo\RpcObject\Helpers\TypeHintResolver;
 use Ufo\RpcObject\RPC\Assertions;
 use Ufo\RpcObject\Rules\Validator\Validator;
 
@@ -28,13 +28,26 @@ class DTOTransformer
 
         foreach ($properties as $property) {
             $value = $property->getValue($dto);
-            if ($value instanceof IArrayConvertible) {
-                $value = $value->toArray();
-            }
+
+            $value = match (gettype($value)) {
+                TypeHintResolver::ARRAY->value => static::mapArrayWithKeys($value),
+                TypeHintResolver::OBJECT->value => $value instanceof IArrayConvertible ? $value->toArray() : $value,
+                default => $value,
+            };
+
             $array[$property->getName()] = $value;
         }
 
         return $array;
+    }
+
+    protected static function mapArrayWithKeys(array $array): array
+    {
+        $result = [];
+        foreach ($array as $k => $v) {
+            $result[$k] = $v instanceof IArrayConvertible ? $v->toArray() : $v;
+        }
+        return $result;
     }
 
     /**
@@ -43,7 +56,7 @@ class DTOTransformer
      * @param string $classFQCN The name of the class to instantiate.
      * @param array $data The array of data to populate the object.
      * @return object The created object.
-     * @throws ReflectionException|InvalidArgumentException|RpcBadParamException
+     * @throws ReflectionException|InvalidArgumentException
      */
     public static function fromArray(string $classFQCN, array $data): object
     {
@@ -55,7 +68,7 @@ class DTOTransformer
 
             if (!isset($data[$key]) && !is_null($data[$key])) {
                 if (!$property->hasDefaultValue()) {
-                    throw new \InvalidArgumentException("Missing required key: '$key'");
+                    throw new InvalidArgumentException("Missing required key: '$key'");
                 }
                 continue;
             }
@@ -69,7 +82,7 @@ class DTOTransformer
     }
 
     /**
-     * @throws RpcBadParamException
+     * @throws InvalidArgumentException
      */
     private static function validateProperty(ReflectionProperty $property, mixed $value): void
     {
@@ -81,7 +94,7 @@ class DTOTransformer
 
             if ($validator->hasErrors()) {
                 $errorMessage = $property->getName() .  $validator->getCurrentError();
-                throw new RpcBadParamException($errorMessage);
+                throw new InvalidArgumentException($errorMessage);
             }
         }
     }
