@@ -47,6 +47,11 @@ enum TypeHintResolver: string
         };
     }
 
+    public static function normalizeArray(array $types): array
+    {
+        return array_map(fn (string $type): string => self::normalize($type), $types);
+    }
+
     public static function isRealClass(string $value): bool
     {
         return TypeHintResolver::normalize($value) === TypeHintResolver::OBJECT->value && class_exists($value);
