@@ -59,10 +59,11 @@ class DTOTransformer
      *
      * @param string $classFQCN The name of the class to instantiate.
      * @param array $data The array of data to populate the object.
+     * @param array<string|string> $renameKey The array of key for replace in data.
      * @return object The created object.
      * @throws ReflectionException|InvalidArgumentException|RpcBadParamException
      */
-    public static function fromArray(string $classFQCN, array $data): object
+    public static function fromArray(string $classFQCN, array $data, array $renameKey = []): object
     {
         $reflection = new ReflectionClass($classFQCN);
         $instance = $reflection->newInstanceWithoutConstructor();
@@ -70,7 +71,11 @@ class DTOTransformer
         foreach ($reflection->getProperties() as $property) {
             $key = $property->getName();
 
-            if (!isset($data[$key]) && !is_null($data[$key])) {
+            if (isset($renameKey[$key])) {
+                $data[$key] = $renameKey[$key] ;
+            }
+
+            if (!isset($data[$key])) {
                 if (!$property->hasDefaultValue()) {
                     throw new InvalidArgumentException("Missing required key: '$key'");
                 }
