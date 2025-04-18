@@ -71,8 +71,9 @@ class DTOTransformer
         foreach ($reflection->getProperties() as $property) {
             $key = $property->getName();
 
+
             if (isset($renameKey[$key])) {
-                $data[$key] = $renameKey[$key] ;
+                $key = $renameKey[$key] ;
             }
 
             if (!isset($data[$key])) {
@@ -82,9 +83,9 @@ class DTOTransformer
                 continue;
             }
 
-            self::validateProperty($property, $data[$key]);
+            $value = self::checkAttributes($property, $data[$key]);
 
-            $property->setValue($instance, $data[$key]);
+            $property->setValue($instance, $value);
         }
 
         return $instance;
@@ -93,18 +94,12 @@ class DTOTransformer
     /**
      * @throws RpcBadParamException
      */
-    private static function validateProperty(ReflectionProperty $property, mixed $value): void
+    protected static function checkAttributes(ReflectionProperty $property, mixed $value): mixed
     {
-        $attributes = $property->getAttributes(Assertions::class);
-
-        if (!empty($attributes)) {
-            $assertions = $attributes[0]->newInstance()->assertions;
-            $validator = Validator::validate($value, $assertions);
-
-            if ($validator->hasErrors()) {
-                $errorMessage = $property->getName() .  $validator->getCurrentError();
-                throw new RpcBadParamException($errorMessage);
-            }
+        $attributes = $property->getAttributes();
+        foreach ($attributes as $attribute) {
+            $value = DTOAttributesEnum::from($attribute->name)->process($attribute->newInstance(), $value);
         }
+        return $value;
     }
 }
