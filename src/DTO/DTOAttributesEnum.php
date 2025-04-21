@@ -13,7 +13,7 @@ enum DTOAttributesEnum: string
     case ASSERTIONS = Assertions::class;
     case DTO = DTO::class;
 
-    public function process(Attribute $attribute, mixed $value): mixed
+    public function process(object $attribute, mixed $value): mixed
     {
         return match ($this) {
             self::ASSERTIONS => $this->validate($attribute, $value),
@@ -22,7 +22,7 @@ enum DTOAttributesEnum: string
         };
     }
     
-    protected function transformDto(Assertions $attribute, mixed $value): object
+    protected function transformDto(DTO $attribute, mixed $value): object
     {
         return DTOTransformer::fromArray($value);
     }
