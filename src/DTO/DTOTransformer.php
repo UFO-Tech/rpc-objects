@@ -99,7 +99,9 @@ class DTOTransformer
         $attributes = $property->getAttributes();
         foreach ($attributes as $attribute) {
             if (!isset($attribute->name)) continue;
-            $value = DTOAttributesEnum::from($attribute->name)->process($attribute->newInstance(), $value, $property);
+            try {
+                $value = DTOAttributesEnum::from($attribute->name)->process($attribute->newInstance(), $value, $property);
+            } catch (\ValueError) {}
         }
         return $value;
     }
