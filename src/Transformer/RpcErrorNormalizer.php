@@ -19,14 +19,14 @@ final class RpcErrorNormalizer implements NormalizerInterface
      * @param array $context
      * @return array
      */
-    public function normalize($object, string $format = null, array $context = []): array
+    public function normalize(mixed $data, ?string $format = null, array $context = []): array|string|int|float|bool|\ArrayObject|null
     {
-        $normalized = new ExceptionToArrayTransformer($object, $this->environment);
+        $normalized = new ExceptionToArrayTransformer($data, $this->environment);
 
         return $normalized->infoByEnvironment();
     }
 
-    public function supportsNormalization($data, string $format = null, array $context = []): bool
+    public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
     {
         return $data instanceof AbstractRpcErrorException && ($context[RpcErrorNormalizer::RPC_CONTEXT] ?? false);
     }

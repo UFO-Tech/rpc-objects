@@ -12,7 +12,7 @@ class AssociativeArrayDenormalizer implements DenormalizerInterface
     {
     }
 
-    public function supportsDenormalization($data, $type, $format = null, array $context = []): bool
+    public function supportsDenormalization(mixed $data, string $type, ?string $format = null, array $context = []): bool
     {
         return is_array($data) && $this->isAssociativeArray($data);
     }

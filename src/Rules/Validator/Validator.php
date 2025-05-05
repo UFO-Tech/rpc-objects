@@ -21,7 +21,7 @@ class Validator
     {
     }
 
-    public static function validate(mixed $value, Constraint|array $constraints = null, string|GroupSequence|array $groups = null): static
+    public static function validate(mixed $value, null|Constraint|array $constraints = null, null|string|GroupSequence|array $groups = null): static
     {
         $validator = Validation::createValidator();
         $errors = $validator->validate($value, $constraints, $groups);
