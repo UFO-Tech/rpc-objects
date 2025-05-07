@@ -65,20 +65,26 @@ class DTOTransformer
     public static function fromArray(string $classFQCN, array $data, array $renameKey = []): object
     {
         $instance = null;
-        $reflection = new ReflectionClass($classFQCN);
-        $constructor = $reflection->getConstructor();
+        $reflectionClass = new ReflectionClass($classFQCN);
+        $constructor = $reflectionClass->getConstructor();
         $constructParams = [];
+        $hasReadonly = false;
 
         if ($constructor && $constructor->isPublic()) {
             foreach ($constructor->getParameters() as $param) {
                 $key = static::getPropertyKey($param, $renameKey);
                 $constructParams[$key] = static::extractValue($key, $data, $param);
+                try {
+                    if ($reflectionClass->getProperty($key)->isReadOnly()) {
+                        $hasReadonly = true;
+                    }
+                } catch (\Throwable) {}
             }
-            $instance = $reflection->newInstanceArgs($constructParams);
+            if ($hasReadonly) $instance = $reflectionClass->newInstanceArgs($constructParams);
         }
-        $instance = $instance ?? $reflection->newInstanceWithoutConstructor();
+        $instance = $instance ?? $reflectionClass->newInstanceWithoutConstructor();
 
-        foreach ($reflection->getProperties() as $property) {
+        foreach ($reflectionClass->getProperties() as $property) {
             $key = static::getPropertyKey($property, $renameKey);
 
             if ($property->isReadOnly() || isset($constructParams[$key])) {
