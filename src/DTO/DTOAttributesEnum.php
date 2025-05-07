@@ -2,12 +2,11 @@
 
 namespace Ufo\RpcObject\DTO;
 
-use Attribute;
+use ReflectionParameter;
 use ReflectionProperty;
 use Ufo\RpcError\RpcBadParamException;
 use Ufo\RpcObject\RPC\Assertions;
 use Ufo\RpcObject\RPC\DTO;
-use Ufo\RpcObject\RPC\ResultAsDTO;
 use Ufo\RpcObject\Rules\Validator\Validator;
 
 enum DTOAttributesEnum: string
@@ -15,7 +14,7 @@ enum DTOAttributesEnum: string
     case ASSERTIONS = Assertions::class;
     case DTO = DTO::class;
 
-    public function process(object $attribute, mixed $value, ReflectionProperty $property): mixed
+    public function process(object $attribute, mixed $value, ReflectionProperty|ReflectionParameter $property): mixed
     {
         return match ($this) {
             self::ASSERTIONS => $this->validate($attribute, $value, $property),
@@ -24,7 +23,7 @@ enum DTOAttributesEnum: string
         };
     }
 
-    protected function resolveDTO(DTO $attribute, mixed $value, ReflectionProperty $property): array|object
+    protected function resolveDTO(DTO $attribute, mixed $value, ReflectionProperty|ReflectionParameter $property): array|object
     {
         if ($attribute->collection) {
             return $this->transformDTOCollection($attribute, $value, $property);
@@ -32,7 +31,7 @@ enum DTOAttributesEnum: string
         return $this->transformDto($attribute, $value, $property);
     }
 
-    protected function transformDTOCollection(DTO $attribute, mixed $value, ReflectionProperty $property): array
+    protected function transformDTOCollection(DTO $attribute, mixed $value, ReflectionProperty|ReflectionParameter $property): array
     {
         $result = [];
         foreach ($value as $key => $item) {
@@ -41,12 +40,12 @@ enum DTOAttributesEnum: string
         return $result;
     }
 
-    protected function transformDto(DTO $attribute, mixed $value, ReflectionProperty $property): object
+    protected function transformDto(DTO $attribute, mixed $value, ReflectionProperty|ReflectionParameter $property): object
     {
         return DTOTransformer::fromArray($attribute->dtoFQCN, $value);
     }
 
-    protected function validate(Assertions $attribute, mixed $value, ReflectionProperty $property): mixed
+    protected function validate(Assertions $attribute, mixed $value, ReflectionProperty|ReflectionParameter $property): mixed
     {
         $assertions = $attribute->assertions;
         $validator = Validator::validate($value, $assertions);

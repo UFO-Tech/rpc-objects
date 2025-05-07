@@ -9,8 +9,6 @@ use ReflectionProperty;
 use ReflectionException;
 use Ufo\RpcObject\Helpers\TypeHintResolver;
 use Ufo\RpcError\RpcBadParamException;
-use Ufo\RpcObject\RPC\Assertions;
-use Ufo\RpcObject\Rules\Validator\Validator;
 
 use function is_null;
 
@@ -120,7 +118,7 @@ class DTOTransformer
     /**
      * @throws RpcBadParamException
      */
-    protected static function checkAttributes(ReflectionProperty $property, mixed $value): mixed
+    protected static function checkAttributes(ReflectionProperty|ReflectionParameter $property, mixed $value): mixed
     {
         $attributes = $property->getAttributes();
         foreach ($attributes as $attribute) {
