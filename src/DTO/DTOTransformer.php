@@ -87,7 +87,7 @@ class DTOTransformer
         foreach ($reflectionClass->getProperties() as $property) {
             $key = static::getPropertyKey($property, $renameKey);
 
-            if ($property->isReadOnly() || isset($constructParams[$key])) {
+            if ($property->isReadOnly() || ($hasReadonly ?? isset($constructParams[$key]))) {
                 continue;
             }
 
