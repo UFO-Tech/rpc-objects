@@ -102,7 +102,7 @@ class DTOTransformer
      */
     protected static function extractValue(string $key, array $data, ReflectionParameter|ReflectionProperty $ref): mixed
     {
-        if (!($data[$key] ?? null)) {
+        if (!isset($data[$key])) {
             if (
                 ($ref instanceof ReflectionParameter && !$ref->isOptional())
                 || ($ref instanceof ReflectionProperty && !$ref->hasDefaultValue())
