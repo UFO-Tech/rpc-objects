@@ -74,7 +74,7 @@ class DTOTransformer
                 $key = static::getPropertyKey($param, $renameKey);
                 $constructParams[$key] = static::extractValue($key, $data, $param);
             }
-            $instance = $reflection->newInstance($constructParams);
+            $instance = $reflection->newInstanceArgs($constructParams);
         }
         $instance = $instance ?? $reflection->newInstanceWithoutConstructor();
 
