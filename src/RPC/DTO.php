@@ -18,7 +18,8 @@ class DTO
 
     public function __construct(
         public readonly string $dtoFQCN,
-        public readonly bool $collection = false
+        public readonly bool $collection = false,
+        public readonly array $renameKeys = [],
     ) {}
 
     /**

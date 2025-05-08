@@ -42,7 +42,7 @@ enum DTOAttributesEnum: string
 
     protected function transformDto(DTO $attribute, mixed $value, ReflectionProperty|ReflectionParameter $property): object
     {
-        return DTOTransformer::fromArray($attribute->dtoFQCN, $value);
+        return DTOTransformer::fromArray($attribute->dtoFQCN, $value, $attribute->renameKeys);
     }
 
     protected function validate(Assertions $attribute, mixed $value, ReflectionProperty|ReflectionParameter $property): mixed
