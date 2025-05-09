@@ -75,7 +75,7 @@ class DTOTransformer
             foreach ($constructor->getParameters() as $param) {
                 $key = static::getPropertyKey($param, $renameKey);
                 if (!$key) continue;
-                $constructParams[$key] = static::extractValue($key, $data, $param);
+                $constructParams[$key] = static::extractValue($key, $data, $param, $classFQCN);
                 try {
                     if ($reflectionClass->getProperty($key)->isReadOnly()) {
                         $hasReadonly = true;
@@ -93,7 +93,7 @@ class DTOTransformer
                 continue;
             }
 
-            $value = static::extractValue($key, $data, $property);
+            $value = static::extractValue($key, $data, $property, $classFQCN);
             $property->setValue($instance, $value);
         }
 
@@ -107,7 +107,8 @@ class DTOTransformer
     protected static function extractValue(
         string $key,
         array $data,
-        ReflectionParameter|ReflectionProperty $ref
+        ReflectionParameter|ReflectionProperty $ref,
+        string $classFQCN
     ): mixed {
         if (isset($data[$key])) {
             return static::checkAttributes($ref, $data[$key]);
@@ -118,13 +119,14 @@ class DTOTransformer
                 ? $ref->getDefaultValue()
                 : throw new InvalidArgumentException("Missing required key for constructor param: '$key'"),
 
-            $ref instanceof ReflectionProperty => (function () use ($ref, $key) {
-                $instance = $ref->getDeclaringClass()->newInstanceWithoutConstructor();
+            $ref instanceof ReflectionProperty => (function () use ($classFQCN, $ref, $key) {
+                $refClass = (new ReflectionClass($classFQCN));
+                $instance = $refClass->newInstanceWithoutConstructor();
                 try {
                     return $ref->getValue($instance);
                 } catch (\Throwable) {
                     if (!$ref->isInitialized($instance)) {
-                        foreach ($ref->getDeclaringClass()->getConstructor()->getParameters() as $p) {
+                        foreach ($refClass->getConstructor()->getParameters() as $p) {
                             if ($p->getName() === $key && $p->isOptional()) {
                                 return $p->getDefaultValue();
                             }

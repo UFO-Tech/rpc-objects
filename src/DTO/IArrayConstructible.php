@@ -4,5 +4,5 @@ namespace Ufo\RpcObject\DTO;
 
 interface IArrayConstructible
 {
-    public static function fromArray(array $data, array $renameKey = []): self;
+    public static function fromArray(array $data, array $renameKey = []): static;
 }
