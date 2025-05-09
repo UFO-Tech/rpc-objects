@@ -10,6 +10,7 @@ use ReflectionException;
 use Ufo\RpcObject\Helpers\TypeHintResolver;
 use Ufo\RpcError\RpcBadParamException;
 
+use function array_key_exists;
 use function is_null;
 
 class DTOTransformer
@@ -66,13 +67,14 @@ class DTOTransformer
     {
         $instance = null;
         $reflectionClass = new ReflectionClass($classFQCN);
-        $constructor = $reflectionClass->getConstructor();
         $constructParams = [];
         $hasReadonly = false;
+        $constructor = $reflectionClass->getConstructor();
 
         if ($constructor && $constructor->isPublic()) {
             foreach ($constructor->getParameters() as $param) {
                 $key = static::getPropertyKey($param, $renameKey);
+                if (!$key) continue;
                 $constructParams[$key] = static::extractValue($key, $data, $param);
                 try {
                     if ($reflectionClass->getProperty($key)->isReadOnly()) {
@@ -87,39 +89,55 @@ class DTOTransformer
         foreach ($reflectionClass->getProperties() as $property) {
             $key = static::getPropertyKey($property, $renameKey);
 
-            if ($property->isReadOnly() || ($hasReadonly ?? isset($constructParams[$key]))) {
+            if (!$key || $property->isReadOnly() || ($hasReadonly && array_key_exists($key, $constructParams))) {
                 continue;
             }
 
-            $property->setValue($instance, static::extractValue($key, $data, $property));
+            $value = static::extractValue($key, $data, $property);
+            $property->setValue($instance, $value);
         }
 
         return $instance;
-    }
-
-    protected static function getPropertyKey(ReflectionProperty|ReflectionParameter $property, array $renameKey): string
-    {
-        return $renameKey[$property->getName()] ?? $property->getName();
     }
 
     /**
      * @throws ReflectionException
      * @throws RpcBadParamException
      */
-    protected static function extractValue(string $key, array $data, ReflectionParameter|ReflectionProperty $ref): mixed
-    {
-        if (!isset($data[$key])) {
-            if (
-                ($ref instanceof ReflectionParameter && !$ref->isOptional())
-                || ($ref instanceof ReflectionProperty && !$ref->hasDefaultValue())
-            ) {
-                throw new InvalidArgumentException("Missing required key: '$key'");
-            }
-            return $ref->getDefaultValue();
+    protected static function extractValue(
+        string $key,
+        array $data,
+        ReflectionParameter|ReflectionProperty $ref
+    ): mixed {
+        if (isset($data[$key])) {
+            return static::checkAttributes($ref, $data[$key]);
         }
 
-        return self::checkAttributes($ref, $data[$key]);
+        return match (true) {
+            $ref instanceof ReflectionParameter => $ref->isOptional()
+                ? $ref->getDefaultValue()
+                : throw new InvalidArgumentException("Missing required key for constructor param: '$key'"),
+
+            $ref instanceof ReflectionProperty => (function () use ($ref, $key) {
+                $instance = $ref->getDeclaringClass()->newInstanceWithoutConstructor();
+                try {
+                    return $ref->getValue($instance);
+                } catch (\Throwable) {
+                    if (!$ref->isInitialized($instance)) {
+                        foreach ($ref->getDeclaringClass()->getConstructor()->getParameters() as $p) {
+                            if ($p->getName() === $key && $p->isOptional()) {
+                                return $p->getDefaultValue();
+                            }
+                        }
+                    }
+                    throw new InvalidArgumentException("Missing required key for property: '$key'");
+                }
+            })(),
+
+            default => throw new LogicException('Unsupported reflection type'),
+        };
     }
+
 
     /**
      * @throws RpcBadParamException
@@ -135,4 +153,11 @@ class DTOTransformer
         }
         return $value;
     }
+
+    protected static function getPropertyKey(ReflectionProperty|ReflectionParameter $property, array $renameKey): ?string
+    {
+        $pName = $property->getName();
+        return array_key_exists($pName, $renameKey) ? $renameKey[$pName] : $pName;
+    }
+
 }

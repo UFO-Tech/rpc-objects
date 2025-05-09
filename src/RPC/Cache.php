@@ -4,6 +4,8 @@ namespace Ufo\RpcObject\RPC;
 
 use Attribute;
 use Ufo\RpcError\RpcInternalException;
+use Ufo\RpcObject\DTO\ArrayConvertibleTrait;
+use Ufo\RpcObject\DTO\IArrayConvertible;
 
 #[Attribute(Attribute::TARGET_METHOD)]
 final readonly class Cache

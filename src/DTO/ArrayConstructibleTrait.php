@@ -9,8 +9,8 @@ trait ArrayConstructibleTrait
     /**
      * @throws ReflectionException
      */
-    public static function fromArray(array $data): self
+    public static function fromArray(array $data, array $renameKey = []): self
     {
-        return DTOTransformer::fromArray(static::class, $data);
+        return DTOTransformer::fromArray(static::class, $data, $renameKey);
     }
 }
