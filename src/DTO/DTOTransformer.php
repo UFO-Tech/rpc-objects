@@ -134,7 +134,7 @@ class DTOTransformer
                 }
             })(),
 
-            default => throw new LogicException('Unsupported reflection type'),
+            default => throw new InvalidArgumentException('Unsupported reflection type'),
         };
     }
 

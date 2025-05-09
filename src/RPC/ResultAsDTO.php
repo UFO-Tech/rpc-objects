@@ -8,7 +8,7 @@ use Ufo\RpcError\RpcInternalException;
 use function implode;
 use function is_null;
 
-#[Attribute(Attribute::TARGET_METHOD|Attribute::TARGET_PROPERTY)]
+#[Attribute(Attribute::TARGET_METHOD|Attribute::TARGET_PROPERTY|Attribute::TARGET_PARAMETER)]
 class ResultAsDTO extends DTO
 {
     /**
