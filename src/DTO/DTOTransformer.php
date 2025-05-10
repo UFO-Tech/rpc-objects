@@ -4,17 +4,19 @@ namespace Ufo\RpcObject\DTO;
 
 use InvalidArgumentException;
 use ReflectionClass;
+use ReflectionException;
 use ReflectionParameter;
 use ReflectionProperty;
-use ReflectionException;
-use Ufo\RpcObject\Helpers\TypeHintResolver;
 use Ufo\RpcError\RpcBadParamException;
+use Ufo\RpcObject\Helpers\TypeHintResolver;
 
 use function array_key_exists;
-use function is_null;
+use function array_map;
+use function gettype;
 
-class DTOTransformer
+class DTOTransformer extends BaseDTOFromArrayTransformer implements IDTOToArrayTransformer,  IDTOFromArrayTransformer
 {
+
     /**
      * Converts a DTO object to an associative array.
      *
@@ -47,23 +49,14 @@ class DTOTransformer
 
     protected static function mapArrayWithKeys(array $array): array
     {
-        $result = [];
-        foreach ($array as $k => $v) {
-            $result[$k] = static::convertValue($v);
-        }
-        return $result;
+        return array_map(fn($v) => static::convertValue($v), $array);
     }
 
     /**
-     * Creates a DTO object from an associative array.
-     *
-     * @param string $classFQCN The name of the class to instantiate.
-     * @param array $data The array of data to populate the object.
-     * @param array<string|string> $renameKey The array of key for replace in data.
-     * @return object The created object.
-     * @throws ReflectionException|InvalidArgumentException|RpcBadParamException
+     * @throws RpcBadParamException
+     * @throws ReflectionException
      */
-    public static function fromArray(string $classFQCN, array $data, array $renameKey = []): object
+    protected static function transformFromArray(string $classFQCN, array $data, array $renameKey = []): object
     {
         $instance = null;
         $reflectionClass = new ReflectionClass($classFQCN);
@@ -98,6 +91,11 @@ class DTOTransformer
         }
 
         return $instance;
+    }
+
+    public static function isSupportClass(string $classFQCN): bool
+    {
+        return true;
     }
 
     /**
@@ -140,7 +138,6 @@ class DTOTransformer
         };
     }
 
-
     /**
      * @throws RpcBadParamException
      */
@@ -161,5 +158,4 @@ class DTOTransformer
         $pName = $property->getName();
         return array_key_exists($pName, $renameKey) ? $renameKey[$pName] : $pName;
     }
-
 }

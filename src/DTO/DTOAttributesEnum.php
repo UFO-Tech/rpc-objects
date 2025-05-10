@@ -9,6 +9,8 @@ use Ufo\RpcObject\RPC\Assertions;
 use Ufo\RpcObject\RPC\DTO;
 use Ufo\RpcObject\Rules\Validator\Validator;
 
+use function class_implements;
+
 enum DTOAttributesEnum: string
 {
     case ASSERTIONS = Assertions::class;
@@ -40,8 +42,24 @@ enum DTOAttributesEnum: string
         return $result;
     }
 
+    /**
+     * @throws RpcBadParamException
+     * @throws NotSupportDTOException
+     */
     protected function transformDto(DTO $attribute, mixed $value, ReflectionProperty|ReflectionParameter $property): object
     {
+         if ($dtoTransformerFQCN = $attribute->transformerFQCN) {
+             $implements = class_implements($dtoTransformerFQCN);
+             if ($implements[IDTOFromArrayTransformer::class] ?? false) {
+                 /**
+                  * @var IDTOFromArrayTransformer $dtoTransformerFQCN
+                  */
+                 if (!$dtoTransformerFQCN::isSupportClass($attribute->dtoFQCN)) {
+                     throw new NotSupportDTOException($dtoTransformerFQCN . ' is not support transform for ' . $attribute->dtoFQCN);
+                 }
+                 return $dtoTransformerFQCN::fromArray($attribute->dtoFQCN, $value, $attribute->renameKeys);
+             }
+         }
         return DTOTransformer::fromArray($attribute->dtoFQCN, $value, $attribute->renameKeys);
     }
 

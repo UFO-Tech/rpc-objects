@@ -2,15 +2,20 @@
 
 namespace Ufo\RpcObject\DTO;
 
-use ReflectionException;
+use Ufo\RpcError\RpcBadParamException;
 
 trait ArrayConstructibleTrait
 {
     /**
-     * @throws ReflectionException
+     * @throws RpcBadParamException
+     * @throws NotSupportDTOException
      */
     public static function fromArray(array $data, array $renameKey = []): static
     {
-        return DTOTransformer::fromArray(static::class, $data, $renameKey);
+        /**
+         * @var static $self
+         */
+        $self = DTOTransformer::fromArray(static::class, $data, $renameKey);
+        return $self;
     }
 }
