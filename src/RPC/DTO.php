@@ -3,25 +3,18 @@
 namespace Ufo\RpcObject\RPC;
 
 use Attribute;
+use Ufo\DTO\Attributes\AttrDTO;
 use Ufo\RpcError\RpcInternalException;
 
-use function implode;
 use function is_null;
 
 #[Attribute(Attribute::TARGET_METHOD|Attribute::TARGET_PROPERTY|Attribute::TARGET_PARAMETER)]
-class DTO
+class DTO extends AttrDTO
 {
     /**
      * @var ?array
      */
     protected ?array $dtoFormat = null;
-
-    public function __construct(
-        public readonly string $dtoFQCN,
-        public readonly bool $collection = false,
-        public readonly array $renameKeys = [],
-        public readonly ?string $transformerFQCN = null
-    ) {}
 
     /**
      * @return array

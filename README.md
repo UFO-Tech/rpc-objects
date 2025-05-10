@@ -23,10 +23,10 @@ composer require ufo-tech/rpc-objects
 ```php
 namespace App\DTO;
 
-use Ufo\RpcObject\DTO\ArrayConstructibleTrait;
-use Ufo\RpcObject\DTO\ArrayConvertibleTrait;
-use Ufo\RpcObject\DTO\IArrayConstructible;
-use Ufo\RpcObject\DTO\IArrayConvertible;
+use Ufo\DTO\ArrayConstructibleTrait;
+use Ufo\DTO\ArrayConvertibleTrait;
+use Ufo\DTO\Interfaces\IArrayConstructible;
+use Ufo\DTO\Interfaces\IArrayConvertible;
 use Symfony\Component\Validator\Constraints as Assert;
 use Ufo\RpcObject\RPC;
 

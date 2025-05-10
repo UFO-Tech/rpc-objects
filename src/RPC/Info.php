@@ -7,7 +7,7 @@ use Attribute;
 #[Attribute(Attribute::TARGET_CLASS)]
 final readonly class Info
 {
-    const DEFAULT_CONCAT = '.';
+    const string DEFAULT_CONCAT = '.';
 
     public function __construct(
         public ?string $alias = null,

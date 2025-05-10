@@ -18,6 +18,7 @@
   "require": {
     "php": ">=8.3",
     "ufo-tech/rpc-exceptions": "*",
+    "ufo-tech/dto-transformer": "^1.0",
     "symfony/serializer": "^7.2",
     "symfony/validator": "^7.2",
     "symfony/http-client": "*",
