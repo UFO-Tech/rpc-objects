@@ -2,9 +2,9 @@
 
 namespace Ufo\RpcObject;
 
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\Ignore;
-use Symfony\Component\Serializer\Annotation\SerializedName;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Attribute\Ignore;
+use Symfony\Component\Serializer\Attribute\SerializedName;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -23,6 +23,7 @@ use Ufo\RpcObject\Rules\RequestRules;
 use Ufo\RpcObject\Rules\Validator\Validator;
 use Ufo\RpcObject\Transformer\Transformer;
 
+use function ksort;
 use function uniqid;
 
 class RpcRequest
@@ -63,6 +64,7 @@ class RpcRequest
         protected ?string $rawJson = null
     )
     {
+        ksort($this->params);
         $this->validate();
         $this->analyzeParams();
     }
