@@ -13,7 +13,7 @@ class RpcPreResponseEvent extends BaseRpcEvent
     public function __construct(
         public RpcResponse $response,
         public RpcRequest $rpcRequest,
-        public Service $service,
+        public ?Service $service,
     ) {}
 
 }
