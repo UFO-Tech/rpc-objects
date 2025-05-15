@@ -13,7 +13,8 @@ class RpcEvent extends BaseRpcEvent
     const string OUTPUT_ASYNC = 'rpc.async_output';
     const string PRE_EXECUTE = 'rpc.pre_execute';
     const string POST_EXECUTE = 'rpc.post_execute';
-    const string RESPONSE = 'rpc.response';
+    const string PRE_RESPONSE = 'rpc.pre_response';
+    const string POST_RESPONSE = 'rpc.post_response';
     const string ERROR = 'rpc.error';
 
     public function __construct(public array $eventData) {}
@@ -30,7 +31,8 @@ class RpcEvent extends BaseRpcEvent
                 static::OUTPUT_ASYNC => RpcAsyncOutputEvent::class,
                 static::PRE_EXECUTE => RpcPreExecuteEvent::class,
                 static::POST_EXECUTE => RpcPostExecuteEvent::class,
-                static::RESPONSE => RpcResponseEvent::class,
+                static::PRE_RESPONSE => RpcPreResponseEvent::class,
+                static::POST_RESPONSE => RpcPostResponseEvent::class,
                 static::ERROR => RpcErrorEvent::class,
                 default => throw new \InvalidArgumentException()
             };
