@@ -5,7 +5,7 @@ namespace Ufo\RpcObject\RPC;
 use Attribute;
 use Ufo\RpcError\RpcInternalException;
 
-#[Attribute(Attribute::TARGET_METHOD|Attribute::TARGET_PROPERTY|Attribute::TARGET_PARAMETER)]
+#[Attribute(Attribute::TARGET_METHOD)]
 class ResultAsDTO extends DTO
 {
     /**
@@ -16,4 +16,10 @@ class ResultAsDTO extends DTO
     {
         return $this->getFormat();
     }
+
+    public function getRealFormat(string $paramName): ?string
+    {
+        return $this->realFormat[$paramName] ?? null;
+    }
+
 }

@@ -50,12 +50,8 @@ class AssertionsCollection
         );
 
         if(empty($paramRef->getAttributes(Assertions::class))) return;
-        $assertions = $paramRef->getAttributes(Assertions::class)[0]->newInstance();
-
-        (new \ReflectionObject($assertions))
-            ->getProperty('constructorArgs')
-            ->setValue($assertions, $attrArguments)
-        ;
+        $assertionsOld = $paramRef->getAttributes(Assertions::class)[0]->newInstance();
+        $assertions = new Assertions($assertionsOld->assertions, $attrArguments);
 
         $this->addAssertions(
             $paramRef->getName(),

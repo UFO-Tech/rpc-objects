@@ -9,7 +9,7 @@ use Ufo\RpcError\ExceptionToArrayTransformer;
 
 final class RpcErrorNormalizer implements NormalizerInterface
 {
-    const RPC_CONTEXT = 'rpc_handle';
+    const string RPC_CONTEXT = 'rpc_handle';
 
     public function __construct(protected string $environment = 'dev') {}
 

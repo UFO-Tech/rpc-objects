@@ -34,14 +34,14 @@ class ConstraintObjectNormalizer implements NormalizerInterface, DenormalizerInt
     }
 
     public function normalize(
-        mixed $object,
+        mixed $data,
         ?string $format = null,
         array $context = []
     ): array|string|int|float|bool|\ArrayObject|null
     {
         return [
-            'class' => $object::class,
-            'context' => $this->normalizer->normalize($object, $format, $context)
+            'class' => $data::class,
+            'context' => $this->normalizer->normalize($data, $format, $context)
         ];
     }
 

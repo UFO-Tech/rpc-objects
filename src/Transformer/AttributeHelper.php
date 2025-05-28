@@ -4,7 +4,6 @@ namespace Ufo\RpcObject\Transformer;
 
 use ReflectionClass;
 
-use function is_null;
 use function preg_match;
 use function trim;
 

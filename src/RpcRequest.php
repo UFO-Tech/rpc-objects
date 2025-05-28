@@ -435,6 +435,8 @@ class RpcRequest
 
     public function getSpecialParams(): array
     {
-        return $this->getRpcParams() ? $this->getRpcParams()->toArray() : [];
+        $sp = $this->getRpcParams() ? $this->getRpcParams()->toArray() : [];
+        $sp[SpecialRpcParamsEnum::PARENT_REQUEST->value] = $this->getId();
+        return $sp;
     }
 }

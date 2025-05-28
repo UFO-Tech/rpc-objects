@@ -59,11 +59,12 @@ class RpcResponse
     }
 
     /**
+     * @param bool $asIs
      * @return string|int|float|bool|array|object|null
      */
-    public function getResult(): string|int|float|bool|array|object|null
+    public function getResult(bool $asIs = false): string|int|float|bool|array|object|null
     {
-        return match (gettype($r = $this->result)) {
+        return $asIs ? $this->result : match (gettype($r = $this->result)) {
             'object' => $this->normalizeResult($r),
             'array' => array_map(function ($data) {
                 try {

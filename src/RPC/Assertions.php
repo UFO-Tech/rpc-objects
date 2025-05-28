@@ -9,7 +9,10 @@ use Ufo\RpcObject\Transformer\Transformer;
 #[Attribute(Attribute::TARGET_PARAMETER | Attribute::TARGET_PROPERTY)]
 final readonly class Assertions extends AttrAssertions
 {
-    public string $constructorArgs;
+    public function __construct(array $assertions, public string $constructorArgs = '')
+    {
+        parent::__construct($assertions);
+    }
 
     public function toArray(): array
     {

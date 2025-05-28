@@ -91,10 +91,11 @@ class RpcBatchRequest
         return $this;
     }
 
-    public function addResult(array $result): static
+    public function addResponse(RpcResponse $response, array $result): static
     {
-        $this->results[$result['id']] = $result;
-        $this->refreshQueue($result['id']);
+        $this->results[$response->getId()] = $result;
+        $this->requestCollection[$response->getId()]?->setResponse($response);
+        $this->refreshQueue($response->getId());
         return $this;
     }
 

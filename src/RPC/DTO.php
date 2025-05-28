@@ -15,6 +15,17 @@ class DTO extends AttrDTO
      * @var ?array
      */
     protected ?array $dtoFormat = null;
+    protected array $realFormat = [];
+
+    public function __construct(
+        string $dtoFQCN,
+        bool $collection = false,
+        array $renameKeys = [],
+        ?string $transformerFQCN = null
+    )
+    {
+        parent::__construct($dtoFQCN, $collection, $renameKeys, $transformerFQCN);
+    }
 
     /**
      * @return array
