@@ -13,7 +13,8 @@ class AttributeHelper
         string $className,
         string $methodName,
         string $argumentName
-    ): ?string {
+    ): ?string
+    {
         $reflectionClass = new ReflectionClass($className);
         $reflectionMethod = $reflectionClass->getMethod($methodName);
         $fileName = $reflectionClass->getFileName();
@@ -21,16 +22,16 @@ class AttributeHelper
         $endLine = $reflectionMethod->getEndLine();
         $fileContent = file($fileName);
         $methodContent = implode("", array_slice($fileContent, $startLine - 1, $endLine - $startLine + 1));
-        preg_match('/(?<=\#\[RPC\\\\Assertions\(\[)(?:(?!\#\[RPC\\\\Assertions).)*?(?=\]\)\]\s*[\w?|]+\s\$'
-                   .$argumentName.',?)/ms', $methodContent, $matches);
-        $result = $matches[0] ?? null;
-        if (!$result) {
-            preg_match('/(?<=\#\[Assertions\(\[)(?:(?!\#\[Assertions).)*?(?=\]\)\]\s*[\w?|]+\s\$'.$argumentName
-                       .',?)/ms', $methodContent, $matches);
-            $result = $matches[0] ?? '';
+        $result = null;
+        $matches = [];
+        foreach (['RPC\\\\', ''] as $ns) {
+            $pattern = '/(?<=\#\[' . $ns . 'Assertions\(\[)(?:(?!\#\[' . $ns . 'Assertions).)*?(?=\]\)\]\s*(?:\#\[[^\]]+\]\s*)*[\w\\\\|?]+\s+\$' . $argumentName . ',?)/ms';
+            if (preg_match($pattern, $methodContent, $matches)) {
+                $result = trim($matches[0]);
+                break;
+            }
         }
-
-        return trim($result);
+        return $result;
     }
 
 }
