@@ -7,6 +7,7 @@ use ReflectionParameter;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Ufo\RpcError\ConstraintsImposedException;
 use Ufo\RpcObject\RPC\Assertions;
 
 use function array_map;
