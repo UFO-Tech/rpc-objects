@@ -60,9 +60,9 @@ class RpcResponse
 
     /**
      * @param bool $asIs
-     * @return string|int|float|bool|array|object|null
+     * @return mixed
      */
-    public function getResult(bool $asIs = false): string|int|float|bool|array|object|null
+    public function getResult(bool $asIs = false): mixed
     {
         return $asIs ? $this->result : match (gettype($r = $this->result)) {
             'object' => $this->normalizeResult($r),
