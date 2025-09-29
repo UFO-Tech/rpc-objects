@@ -9,7 +9,7 @@ use Ufo\RpcError\RpcInternalException;
 use function is_null;
 
 #[Attribute(Attribute::TARGET_METHOD|Attribute::TARGET_PROPERTY|Attribute::TARGET_PARAMETER)]
-class DTO extends AttrDTO
+class DTOCollection extends DTO
 {
     /**
      * @var ?array
@@ -19,19 +19,11 @@ class DTO extends AttrDTO
 
     public function __construct(
         string $dtoFQCN,
-        /** @deprecated use context[static::C_COLLECTION]   */
-        bool $collection = false,
-        /** @deprecated use context[static::C_RENAME_KEYS]   */
-        array $renameKeys = [],
-        /** @deprecated use context[DTO::C_TRANSFORMER]   */
-        ?string $transformerFQCN = null,
         array $context = []
     )
     {
         parent::__construct($dtoFQCN, context: [
-            static::C_COLLECTION => $collection,
-            static::C_RENAME_KEYS => $renameKeys,
-            static::C_TRANSFORMER => $transformerFQCN,
+            static::C_COLLECTION => true,
             ...$context,
         ]);
     }

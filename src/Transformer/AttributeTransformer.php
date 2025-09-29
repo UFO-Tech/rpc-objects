@@ -26,11 +26,11 @@ class AttributeTransformer implements IDTOFromArrayTransformer
         ResultAsDTO::class,
     ];
 
-    public static function fromArray(string $classFQCN, array $data, array $renameKey = []): object
+    public static function fromArray(string $classFQCN, array $data, array $renameKey = [], array $namespaces = []): object
     {
         foreach (self::ATTRIBUTES as $attributeFQCN) {
             try {
-                return DTOTransformer::fromArray($attributeFQCN, $data, $renameKey);
+                return DTOTransformer::fromArray($attributeFQCN, $data, $renameKey, $namespaces);
             } catch (\Throwable) {}
         }
         throw new NotSupportDTOException('No support attribute');
