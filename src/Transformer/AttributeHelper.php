@@ -25,7 +25,7 @@ class AttributeHelper
         $result = null;
         $matches = [];
         foreach (['RPC\\\\', ''] as $ns) {
-            $pattern = '/(?<=\#\[' . $ns . 'Assertions\(\[)(?:(?!\#\[' . $ns . 'Assertions).)*?(?=\]\)\]\s*(?:\#\[[^\]]+\]\s*)*[\w\\\\|?]+\s+\$' . $argumentName . ',?)/ms';
+            $pattern = '/(?<=\#\[' . $ns . 'Assertions\(\[)(?:(?!\#\[' . $ns . 'Assertions).)*?(?=\]\)\]\s*(?:\#\[[^\]]+\]\s*)*[\w\\\\|?]+\s+\$' . $argumentName . '\W)/ms';
             if (preg_match($pattern, $methodContent, $matches)) {
                 $result = trim($matches[0]);
                 break;

@@ -15,7 +15,7 @@ class ConstraintObjectNormalizer implements NormalizerInterface, DenormalizerInt
 {
 
     public function __construct(
-        protected AbstractObjectNormalizer $normalizer
+        protected DtoObjectNormalizer $normalizer
     ) {}
 
     public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): mixed

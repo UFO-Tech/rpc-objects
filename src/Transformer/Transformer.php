@@ -52,18 +52,19 @@ class Transformer
                 ],
             );
 
-            $objectNormaliser = new ObjectNormalizer(
+            $dtoObjectNormaliser = new DtoObjectNormalizer(new ObjectNormalizer(
                 $classMetadataFactory,
                 $metadataAwareNameConverter,
                 propertyTypeExtractor: $propertyInfoExtractor,
-            );
+            ));
             $arrayDenormalizer = new ArrayDenormalizer();
             $normalizers = [
+                new EnumNormalizer(),
+                $dtoObjectNormaliser,
                 new DateTimeNormalizer(),
                 new UidNormalizer(),
-                new ConstraintObjectNormalizer($objectNormaliser),
-                $objectNormaliser,
-                new AssociativeArrayDenormalizer($objectNormaliser),
+                new ConstraintObjectNormalizer($dtoObjectNormaliser),
+                new AssociativeArrayDenormalizer($dtoObjectNormaliser),
                 $arrayDenormalizer,
             ];
 

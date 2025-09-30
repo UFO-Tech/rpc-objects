@@ -22,10 +22,7 @@ class DTOCollection extends DTO
         array $context = []
     )
     {
-        parent::__construct($dtoFQCN, context: [
-            static::C_COLLECTION => true,
-            ...$context,
-        ]);
+        parent::__construct($dtoFQCN, true, context: $context);
     }
 
     /**

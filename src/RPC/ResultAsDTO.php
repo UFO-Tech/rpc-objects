@@ -3,9 +3,13 @@
 namespace Ufo\RpcObject\RPC;
 
 use Attribute;
+use JetBrains\PhpStorm\Deprecated;
 use Ufo\RpcError\RpcInternalException;
 
 #[Attribute(Attribute::TARGET_METHOD)]
+#[Deprecated(
+    'Use docblock or return typehint'
+)]
 class ResultAsDTO extends DTO
 {
     /**

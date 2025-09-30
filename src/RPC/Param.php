@@ -42,6 +42,7 @@ final readonly class Param
 
     public function __construct(
         protected int $type,
+        bool $collection = false,
         /** @deprecated use context[Param::C_DEFAULT] */
         public null|string|int $default = null,
         /** @deprecated use context[Param::C_CONVERTOR] */
@@ -57,7 +58,8 @@ final readonly class Param
             ...[
                 self::C_DEFAULT => $default,
                 self::C_CONVERTOR => $convertorFQCN,
-            ]
+                self::C_COLLECTION => $collection,
+            ],
         ];
     }
 

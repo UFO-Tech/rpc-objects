@@ -6,6 +6,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\Ignore;
 use Symfony\Component\Serializer\Attribute\SerializedName;
 use Symfony\Component\Serializer\SerializerInterface;
+use Ufo\DTO\Helpers\TypeHintResolver;
 use Ufo\RpcError\AbstractRpcErrorException;
 use Ufo\RpcError\WrongWayException;
 use Ufo\RpcObject\RPC\Cache;
@@ -64,20 +65,20 @@ class RpcResponse
      */
     public function getResult(bool $asIs = false): mixed
     {
-        return $asIs ? $this->result : match (gettype($r = $this->result)) {
-            'object' => $this->normalizeResult($r),
-            'array' => array_map(function ($data) {
+        return $asIs ? $this->result : match (gettype($this->result)) {
+            TypeHintResolver::OBJECT->value => $this->normalizeResult($this->result),
+            TypeHintResolver::ARRAY->value => array_map(function ($data) {
                 try {
                     return $this->normalizeResult($data);
                 } catch (\Throwable $e) {
                     return $data;
                 }
-            }, $r),
-            default => $r
+            }, $this->result),
+            default => $this->result
         };
     }
 
-    protected function normalizeResult(object $result): array
+    protected function normalizeResult(object $result): array|string|int
     {
         return $this->transformer->normalize($result, context: $this->contextBuilder->removeParent()->toArray());
     }

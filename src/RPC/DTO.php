@@ -19,7 +19,6 @@ class DTO extends AttrDTO
 
     public function __construct(
         string $dtoFQCN,
-        /** @deprecated use context[static::C_COLLECTION]   */
         bool $collection = false,
         /** @deprecated use context[static::C_RENAME_KEYS]   */
         array $renameKeys = [],
@@ -29,10 +28,12 @@ class DTO extends AttrDTO
     )
     {
         parent::__construct($dtoFQCN, context: [
-            static::C_COLLECTION => $collection,
-            static::C_RENAME_KEYS => $renameKeys,
-            static::C_TRANSFORMER => $transformerFQCN,
             ...$context,
+            ...[
+                static::C_COLLECTION => $collection,
+                static::C_RENAME_KEYS => $renameKeys,
+                static::C_TRANSFORMER => $transformerFQCN,
+            ]
         ]);
     }
 
