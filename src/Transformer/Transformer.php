@@ -14,12 +14,9 @@ use Symfony\Component\Serializer\NameConverter\MetadataAwareNameConverter;
 use Symfony\Component\Serializer\Normalizer\{
     ArrayDenormalizer,
     DateTimeNormalizer,
-    DenormalizerInterface,
-    NormalizerInterface,
     UidNormalizer,
     ObjectNormalizer};
 use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\Serializer\SerializerAwareInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class Transformer
@@ -60,9 +57,9 @@ class Transformer
             $arrayDenormalizer = new ArrayDenormalizer();
             $normalizers = [
                 new EnumNormalizer(),
-                $dtoObjectNormaliser,
                 new DateTimeNormalizer(),
                 new UidNormalizer(),
+                $dtoObjectNormaliser,
                 new ConstraintObjectNormalizer($dtoObjectNormaliser),
                 new AssociativeArrayDenormalizer($dtoObjectNormaliser),
                 $arrayDenormalizer,
