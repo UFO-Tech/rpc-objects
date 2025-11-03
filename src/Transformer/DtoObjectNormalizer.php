@@ -15,7 +15,7 @@ use UnitEnum;
 
 class DtoObjectNormalizer implements NormalizerInterface, DenormalizerInterface, SerializerAwareInterface
 {
-    public const string AS_SIMPLE_ARRAY = 'asSimpleArray';
+    public const string AS_SMART = 'asSmart';
     public function __construct(
         protected AbstractObjectNormalizer $normalizer
     ) {}
@@ -32,7 +32,7 @@ class DtoObjectNormalizer implements NormalizerInterface, DenormalizerInterface,
             $result = $result->getArrayCopy();
         }
 
-        if (($context[static::AS_SIMPLE_ARRAY] ?? false) && is_object($data) && is_array($result)) {
+        if (($context[static::AS_SMART] ?? false) && is_object($data) && is_array($result)) {
             $refClass = new \ReflectionClass($data);
             $result[DTOTransformer::DTO_CLASSNAME] = $refClass->getShortName();
         }
