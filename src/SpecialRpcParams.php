@@ -4,19 +4,22 @@ namespace Ufo\RpcObject;
 
 use Ufo\RpcError\RpcRuntimeException;
 
-class SpecialRpcParams
+readonly class SpecialRpcParams
 {
-    protected ?CallbackObject $callbackObject = null;
+    protected ?CallbackObject $callbackObject;
 
     public function __construct(
         ?string $callbackUrl = null,
         protected float $timeout = SpecialRpcParamsEnum::DEFAULT_TIMEOUT,
         protected string|int|null $rayId = null,
+        public bool $ignoreCache = false
     )
     {
+        $callbackObject = null;
         if (is_string($callbackUrl)) {
-            $this->callbackObject = new CallbackObject($callbackUrl);
+            $callbackObject = new CallbackObject($callbackUrl);
         }
+        $this->callbackObject = $callbackObject;
     }
 
     /**
