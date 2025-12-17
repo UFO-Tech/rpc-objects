@@ -36,11 +36,8 @@ class SpecialParamsRules
     {
         return new Assert\Optional([
             new Assert\NotBlank(),
-            new Assert\Type(['int', 'float']),
-            new Assert\Range([
-                'min' => 10,
-                'max' => 120
-            ])
+            new Assert\Type(type: ['int', 'float']),
+            new Assert\Range(min: 10, max: 120)
         ]);
     }
 }

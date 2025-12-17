@@ -5,6 +5,7 @@ namespace Ufo\RpcObject;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\Ignore;
 use Symfony\Component\Serializer\Attribute\SerializedName;
+use Symfony\Component\Serializer\Context\ContextBuilderInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Ufo\DTO\Helpers\TypeHintResolver;
 use Ufo\RpcError\AbstractRpcErrorException;
@@ -134,4 +135,8 @@ class RpcResponse
         return $this->cache;
     }
 
+    public function toArray(ContextBuilderInterface $contextBuilder): array
+    {
+        return $this->transformer->normalize($this, context: $contextBuilder->toArray());
+    }
 }
