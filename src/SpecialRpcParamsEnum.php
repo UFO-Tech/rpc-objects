@@ -16,6 +16,7 @@ enum SpecialRpcParamsEnum: string
     case TIMEOUT = 'timeout';
     case CALLBACK = 'callback';
     case PARENT_REQUEST = 'rayId';
+    case IGNORE_CACHE = 'ignoreCache';
 
     public static function fromArray(array $data): SpecialRpcParams
     {
@@ -25,6 +26,7 @@ enum SpecialRpcParamsEnum: string
             $data[self::CALLBACK->value] ?? null,
             $data[self::TIMEOUT->value] ?? self::DEFAULT_TIMEOUT,
             $data[self::PARENT_REQUEST->value] ?? null,
+            $data[self::IGNORE_CACHE->value] ?? false,
         );
     }
 
