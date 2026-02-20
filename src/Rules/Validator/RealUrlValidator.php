@@ -3,7 +3,6 @@
 namespace Ufo\RpcObject\Rules\Validator;
 
 use Symfony\Component\HttpClient\CurlHttpClient;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\UrlValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
@@ -40,15 +39,15 @@ class RealUrlValidator extends UrlValidator
     private function checkUrl(string $value): bool
     {
         try {
-            $client = new CurlHttpClient(['headers'=>['Content-Type' => 'application/json',],'timeout' => 2, 'max_duration' => 2]);
+            $client = new CurlHttpClient(['timeout' => 30, 'max_duration' => 2]);
 
-            $response = $client->request(Request::METHOD_OPTIONS, $value);
+            $response = $client->request('OPTIONS', $value);
             $statusCode = $response->getStatusCode();
             $responseHeaders = $response->getHeaders();
 
             if ($statusCode !== 200 || !isset($responseHeaders[self::HEADER])) {
                 $postResponse = $client->request(
-                    Request::METHOD_POST,
+                    'POST',
                     $value,
                     [
                         'json' => [
@@ -58,7 +57,7 @@ class RealUrlValidator extends UrlValidator
                 );
                 $valid = $postResponse->getStatusCode() < 400;
             } else {
-                $valid = stripos(current($responseHeaders[self::HEADER]), Request::METHOD_POST) !== false;
+                $valid = stripos(current($responseHeaders[self::HEADER]), 'POST') !== false;
             }
         } catch (\Throwable $e) {
             $valid = false;

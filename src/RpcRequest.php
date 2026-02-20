@@ -158,6 +158,7 @@ class RpcRequest
         $validator = Validator::validate($data, RequestRules::assertAll());
 
         $params = $data['params'] ?? [];
+        $sp = null;
         try {
             $sp = ParamsSplitter::split($params);
             $object = new static(
@@ -182,7 +183,7 @@ class RpcRequest
             $object->setError($e);
         }
 
-        if (!$object->hasError() && $sp->getSpecialParams()) {
+        if (!$object->hasError() && $sp?->getSpecialParams()) {
             $object->setRpcParams($sp->getSpecialParams());
         }
         return $object;
