@@ -3,12 +3,19 @@
 namespace Ufo\RpcObject\RPC;
 
 use Attribute;
+use Symfony\Component\Validator\Constraint;
 use Ufo\DTO\Attributes\AttrAssertions;
 use Ufo\RpcObject\Transformer\Transformer;
 
 #[Attribute(Attribute::TARGET_PARAMETER | Attribute::TARGET_PROPERTY)]
 final readonly class Assertions extends AttrAssertions
 {
+    /**
+     * Assertions constructor.
+     *
+     * @param Constraint[] $assertions 1 or more Symfony Constraint objects
+     * @param string $constructorArgs constructor arguments
+     */
     public function __construct(array $assertions, public string $constructorArgs = '')
     {
         parent::__construct($assertions);

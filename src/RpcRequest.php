@@ -18,6 +18,7 @@ use Ufo\RpcError\RpcAsyncRequestException;
 use Ufo\RpcError\RpcBadRequestException;
 use Ufo\RpcError\RpcJsonParseException;
 use Ufo\RpcError\RpcRuntimeException;
+use Ufo\RpcObject\RPC\Info;
 use Ufo\RpcObject\Rules\ParamsSplitter;
 use Ufo\RpcObject\Rules\RequestRules;
 use Ufo\RpcObject\Rules\Validator\Validator;
@@ -61,7 +62,9 @@ class RpcRequest
         #[SerializedName('jsonrpc')]
         protected string $version = self::DEFAULT_VERSION,
         #[Ignore]
-        protected ?string $rawJson = null
+        protected ?string $rawJson = null,
+        #[Ignore]
+        readonly public string $apiVersion = Info::DEFAULT_VERSION
     )
     {
         ksort($this->params);
@@ -140,10 +143,10 @@ class RpcRequest
      * @return static
      * @throws RpcJsonParseException
      */
-    public static function fromJson(string $json): static
+    public static function fromJson(string $json, string $apiVersion = Info::DEFAULT_VERSION): static
     {
         try {
-            return static::fromArray(json_decode($json, true), $json);
+            return static::fromArray(json_decode($json, true), $apiVersion);
         } catch (TypeError $e) {
             throw new RpcJsonParseException('Invalid json data', previous: $e);
         }
@@ -153,7 +156,7 @@ class RpcRequest
      * @param array $data
      * @return static
      */
-    public static function fromArray(array $data): static
+    public static function fromArray(array $data, string $apiVersion = Info::DEFAULT_VERSION): static
     {
         $validator = Validator::validate($data, RequestRules::assertAll());
 
@@ -166,7 +169,8 @@ class RpcRequest
                 (string)$data['method'] ?? '',
                 $sp->getParams(),
                 $data['jsonrpc'] ?? static::DEFAULT_VERSION,
-                json_encode($data)
+                json_encode($data),
+                apiVersion: $apiVersion
             );
         } catch (Throwable $e) {
             $ref = new \ReflectionClass(static::class);
