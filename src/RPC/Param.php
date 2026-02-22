@@ -43,10 +43,6 @@ final readonly class Param
     public function __construct(
         protected int $type,
         bool $collection = false,
-        /** @deprecated use context[Param::C_DEFAULT] */
-        public null|string|int $default = null,
-        /** @deprecated use context[Param::C_CONVERTOR] */
-        public ?string $convertorFQCN = null,
         array $context = []
     ) {
         if (($type & ~self::ALLOWED_BITS) !== 0) {
@@ -56,8 +52,6 @@ final readonly class Param
         $this->context = [
             ...$context,
             ...[
-                self::C_DEFAULT => $default,
-                self::C_CONVERTOR => $convertorFQCN,
                 self::C_COLLECTION => $collection,
             ],
         ];
@@ -84,5 +78,20 @@ final readonly class Param
             )
         );
         return count($scalarTypes) > 1 ? $scalarTypes : $scalarTypes[0];
+    }
+
+    public static function bitFromType(string $type): int
+    {
+        return match ($type) {
+            TypeHintResolver::STRING->value => self::STRING,
+            TypeHintResolver::INT->value => self::INT,
+            TypeHintResolver::FLOAT->value => self::FLOAT,
+            default => self::NULL,
+        };
+    }
+
+    public function getData(string $contextKey): mixed
+    {
+        return $this->context[$contextKey] ?? null;
     }
 }

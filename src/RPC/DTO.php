@@ -20,10 +20,6 @@ class DTO extends AttrDTO
     public function __construct(
         string $dtoFQCN,
         bool $collection = false,
-        /** @deprecated use context[static::C_RENAME_KEYS]   */
-        array $renameKeys = [],
-        /** @deprecated use context[DTO::C_TRANSFORMER]   */
-        ?string $transformerFQCN = null,
         array $context = []
     )
     {
@@ -31,8 +27,6 @@ class DTO extends AttrDTO
             ...$context,
             ...[
                 static::C_COLLECTION => $collection,
-                static::C_RENAME_KEYS => $renameKeys,
-                static::C_TRANSFORMER => $transformerFQCN,
             ]
         ]);
     }
@@ -47,5 +41,15 @@ class DTO extends AttrDTO
             throw new RpcInternalException('DTO ' . $this->dtoFQCN . ' is not parsed');
         }
         return $this->dtoFormat;
+    }
+
+    public function getRealFormat(string $paramName): ?string
+    {
+        return $this->realFormat[$paramName] ?? null;
+    }
+
+    public function isCollection(): bool
+    {
+        return $this->context[static::C_COLLECTION] ?? false;
     }
 }

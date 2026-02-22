@@ -11,7 +11,6 @@ use Ufo\RpcObject\RPC\CacheRelation;
 use Ufo\RpcObject\RPC\DTO;
 use Ufo\RpcObject\RPC\IgnoreApi;
 use Ufo\RpcObject\RPC\Lock;
-use Ufo\RpcObject\RPC\ResultAsDTO;
 
 use function in_array;
 
@@ -23,7 +22,6 @@ class AttributeTransformer implements IDTOFromArrayTransformer
         IgnoreApi::class,
         CacheRelation::class,
         DTO::class,
-        ResultAsDTO::class,
     ];
 
     public static function fromArray(string $classFQCN, array $data, array $renameKey = [], array $namespaces = []): object
