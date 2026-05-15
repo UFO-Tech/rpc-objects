@@ -6,8 +6,8 @@ use BackedEnum;
 use Symfony\Component\Serializer\Exception\UnexpectedValueException;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
-use Ufo\DTO\DTOTransformer;
 use Ufo\DTO\Exceptions\BadParamException;
+use Ufo\DTO\Transformer\Converter\EnumConverter;
 use UnitEnum;
 
 class EnumNormalizer implements NormalizerInterface, DenormalizerInterface
@@ -46,7 +46,7 @@ class EnumNormalizer implements NormalizerInterface, DenormalizerInterface
     public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): string|int|UnitEnum|BackedEnum
     {
         try {
-            return DTOTransformer::transformEnum($type, $data);
+            return EnumConverter::toEnum($type, $data);
         } catch (BadParamException $e) {
             throw new UnexpectedValueException($e->getMessage(), $e->getCode(), $e);
         }

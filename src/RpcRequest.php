@@ -166,7 +166,7 @@ class RpcRequest
             $sp = ParamsSplitter::split($params);
             $object = new static(
                 $data['id'] ?? '',
-                (string)$data['method'] ?? '',
+                (string)($data['method'] ?? ''),
                 $sp->getParams(),
                 $data['jsonrpc'] ?? static::DEFAULT_VERSION,
                 json_encode($data),
