@@ -9,15 +9,15 @@ class RequestRules
 {
     public static function assertAll(): Constraint
     {
-        return new Assert\Collection([
-            'fields' => [
+        return new Assert\Collection(
+            fields: [
                 'id' => RequestRules::assertId(),
                 'method' => RequestRules::assertMethod(),
                 'jsonrpc' => RequestRules::assertVersion(),
                 'params' => RequestRules::assertParams(),
             ],
-            'allowExtraFields' => true
-        ]);
+            allowExtraFields: true
+        );
     }
 
 
@@ -50,11 +50,11 @@ class RequestRules
     {
         return new Assert\Optional([
             new Assert\Type('array'),
-            new Assert\Count(['min' => 1]),
-            new Assert\Collection([
-                'fields' => SpecialParamsRules::assertAllParams(),
-                'allowExtraFields' => true
-            ]),
+            new Assert\Count(min: 1),
+            new Assert\Collection(
+                fields: SpecialParamsRules::assertAllParams(),
+                allowExtraFields: true,
+            ),
         ]);
     }
 
