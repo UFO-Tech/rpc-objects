@@ -2,17 +2,25 @@
 
 namespace Ufo\RpcObject;
 
-class RpcAsyncRequest
+use JetBrains\PhpStorm\Deprecated;
+
+readonly class RpcAsyncRequest
 {
 
     public function __construct(
-        protected RpcRequest $rpcRequest,
-        public readonly string $token = ''
+        public RpcRequest $rpcRequest,
+        public string $token = '',
+        public array $meta = [],
     ) {}
 
     /**
-     * @return RpcRequest
+     * @deprecated Use the rpcRequest property directly.
+     * todo delete in 4.0
      */
+    #[Deprecated(
+        reason: 'Use the rpcRequest property directly. Will be removed in 4.0.0.',
+        replacement: '%class%->rpcRequest',
+    )]
     public function getRpcRequest(): RpcRequest
     {
         return $this->rpcRequest;

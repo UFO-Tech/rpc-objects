@@ -2,15 +2,12 @@
 
 namespace Ufo\RpcObject\Transformer;
 
-use Symfony\Component\PropertyInfo\Type;
 use Symfony\Component\Serializer\Exception\InvalidArgumentException;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
 class AssociativeArrayDenormalizer implements DenormalizerInterface
 {
-    public function __construct(protected DenormalizerInterface $denormalizer)
-    {
-    }
+    public function __construct(protected DenormalizerInterface $denormalizer) {}
 
     public function supportsDenormalization(mixed $data, string $type, ?string $format = null, array $context = []): bool
     {
@@ -32,9 +29,12 @@ class AssociativeArrayDenormalizer implements DenormalizerInterface
         $result = [];
         foreach ($data as $key => $value) {
             if (is_array($value) && isset($context['value_type'])) {
-                /** @var Type $valueType */
-                $valueType = $context['value_type'];
-                $result[$key] = $this->denormalizer->denormalize($value, $valueType->getClassName(), $format, $context);
+                $result[$key] = $this->denormalizer->denormalize(
+                    $value,
+                    $this->resolveValueTypeClass($context['value_type']),
+                    $format,
+                    $context
+                );
             } else {
                 $result[$key] = $value;
             }
@@ -44,9 +44,17 @@ class AssociativeArrayDenormalizer implements DenormalizerInterface
         return $result;
     }
 
+    private function resolveValueTypeClass(mixed $valueType): string
+    {
+        return match (true) {
+            is_string($valueType) => $valueType,
+            is_object($valueType) && method_exists($valueType, 'getClassName') => (string)$valueType->getClassName(),
+            default => throw new InvalidArgumentException('Context "value_type" expected to be a class name or a type object exposing getClassName().')
+        };
+    }
+
     public function getSupportedTypes(?string $format): array
     {
         return ['*' => true];
     }
 }
-

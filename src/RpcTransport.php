@@ -6,6 +6,9 @@ use function count;
 
 final readonly class RpcTransport implements \Stringable
 {
+    public const string SYNC_PREFIX = 'sync';
+    public const string ASYNC_PREFIX = 'rpc_async';
+
     public function __construct(
         public ?string $scheme,
         #[Secret]
