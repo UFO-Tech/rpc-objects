@@ -9,7 +9,6 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Throwable;
-use TypeError;
 use Ufo\RpcError\AbstractRpcErrorException;
 use Ufo\RpcError\IProcedureExceptionInterface;
 use Ufo\RpcError\IServerExceptionInterface;
@@ -18,6 +17,7 @@ use Ufo\RpcError\RpcAsyncRequestException;
 use Ufo\RpcError\RpcBadRequestException;
 use Ufo\RpcError\RpcJsonParseException;
 use Ufo\RpcError\RpcRuntimeException;
+use Ufo\RpcObject\Factory\RpcRequestFactory;
 use Ufo\RpcObject\RPC\Info;
 use Ufo\RpcObject\Rules\ParamsSplitter;
 use Ufo\RpcObject\Rules\RequestRules;
@@ -29,7 +29,7 @@ use function uniqid;
 
 class RpcRequest
 {
-    const string S_GROUP = 'raw';
+    const string S_GROUP = self::class;
     const string DEFAULT_VERSION = '2.0';
 
     #[Ignore]
@@ -72,6 +72,11 @@ class RpcRequest
         $this->analyzeParams();
     }
 
+    public static function generateId(): string
+    {
+        return uniqid();
+    }
+
     /**
      * @return void
      * @throws AbstractRpcErrorException
@@ -86,8 +91,8 @@ class RpcRequest
 
     protected function analyzeParams(): void
     {
-        if (empty($this->id)) {
-            $this->id = uniqid();
+        if ($this->id === '') {
+            $this->id = static::generateId();
         }
 
         $ps = ParamsSplitter::split($this->params);
@@ -140,57 +145,23 @@ class RpcRequest
 
     /**
      * @param string $json
+     * @param string $apiVersion
      * @return static
      * @throws RpcJsonParseException
      */
     public static function fromJson(string $json, string $apiVersion = Info::DEFAULT_VERSION): static
     {
-        try {
-            return static::fromArray(json_decode($json, true), $apiVersion);
-        } catch (TypeError $e) {
-            throw new RpcJsonParseException('Invalid json data', previous: $e);
-        }
+        return RpcRequestFactory::fromJson($json, $apiVersion, static::class);
     }
 
     /**
      * @param array $data
+     * @param string $apiVersion
      * @return static
      */
     public static function fromArray(array $data, string $apiVersion = Info::DEFAULT_VERSION): static
     {
-        $validator = Validator::validate($data, RequestRules::assertAll());
-
-        $params = $data['params'] ?? [];
-        $sp = null;
-        try {
-            $sp = ParamsSplitter::split($params);
-            $object = new static(
-                $data['id'] ?? '',
-                (string)($data['method'] ?? ''),
-                $sp->getParams(),
-                $data['jsonrpc'] ?? static::DEFAULT_VERSION,
-                json_encode($data),
-                apiVersion: $apiVersion
-            );
-        } catch (Throwable $e) {
-            $ref = new \ReflectionClass(static::class);
-            $object = $ref->newInstanceWithoutConstructor();
-            $ref->getProperty('id')->setValue($object, $data['id'] ?? uniqid());
-            $ref->getProperty('method')->setValue($object, $data['method'] ?? 'noname');
-            $ref->getProperty('version')->setValue($object, $data['jsonrpc'] ?? RpcRequest::DEFAULT_VERSION);
-            $ref->getProperty('params')->setValue($object, $data['params'] ?? []);
-        }
-
-        try {
-            $validator->throw(RpcBadRequestException::class);
-        } catch (AbstractRpcErrorException $e) {
-            $object->setError($e);
-        }
-
-        if (!$object->hasError() && $sp?->getSpecialParams()) {
-            $object->setRpcParams($sp->getSpecialParams());
-        }
-        return $object;
+        return RpcRequestFactory::fromArray($data, $apiVersion, static::class);
     }
 
     public function toArray(?NormalizerInterface $normalizer = null, array $context = []): array
@@ -199,7 +170,7 @@ class RpcRequest
             $normalizer = Transformer::getDefault();
         }
         $context = array_merge([
-            AbstractNormalizer::GROUPS => [static::S_GROUP],
+            AbstractNormalizer::GROUPS => [static::class],
         ], $context);
         return $normalizer->normalize($this, context: $context);
     }
@@ -311,7 +282,7 @@ class RpcRequest
     public function refreshRawJson(SerializerInterface $serializer, array $context = []): void
     {
         $context = array_merge([
-            AbstractNormalizer::GROUPS => [static::S_GROUP]
+            AbstractNormalizer::GROUPS => [static::class]
         ], $context);
         $this->rawJson = $serializer->serialize($this, 'json', $context);
     }

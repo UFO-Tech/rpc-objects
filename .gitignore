@@ -3,3 +3,5 @@
 .env
 /composer.lock
 test.php
+/.phpunit.cache/
+/build/

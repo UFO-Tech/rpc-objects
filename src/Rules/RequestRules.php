@@ -4,18 +4,23 @@ namespace Ufo\RpcObject\Rules;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as Assert;
+use Ufo\RpcObject\RpcNotificationRequest;
 
 class RequestRules
 {
-    public static function assertAll(): Constraint
+    public static function assertAll(?string $classFqcn = null): Constraint
     {
+        $rules = [
+            'id' => RequestRules::assertId(),
+            'method' => RequestRules::assertMethod(),
+            'jsonrpc' => RequestRules::assertVersion(),
+            'params' => RequestRules::assertParams(),
+        ];
+        if ($classFqcn === RpcNotificationRequest::class) {
+            unset($rules['id']);
+        }
         return new Assert\Collection(
-            fields: [
-                'id' => RequestRules::assertId(),
-                'method' => RequestRules::assertMethod(),
-                'jsonrpc' => RequestRules::assertVersion(),
-                'params' => RequestRules::assertParams(),
-            ],
+            fields: $rules,
             allowExtraFields: true
         );
     }

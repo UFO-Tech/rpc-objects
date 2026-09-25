@@ -1,6 +1,5 @@
 {
   "name": "ufo-tech/rpc-objects",
-  "version": "3.7.0",
   "description": "Component for UFO-Tech RPC Library",
   "license": "MIT",
   "authors": [
@@ -18,12 +17,22 @@
   "require": {
     "php": ">=8.3",
     "ufo-tech/rpc-exceptions": "*",
-    "ufo-tech/dto-transformer": "^3.0",
+    "ufo-tech/dto-transformer": "^3",
     "symfony/serializer": "^7.2",
     "symfony/validator": "^7.2",
     "symfony/http-client": "*",
     "symfony/property-access": "*",
     "ext-intl": "*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^11.5",
+    "symfony/cache": "^7.2",
+    "symfony/lock": "^7.2"
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Ufo\\RpcObject\\Tests\\": "tests/"
+    }
   },
   "autoload": {
     "psr-4": {
@@ -33,6 +42,11 @@
   "extra": {
   },
   "scripts": {
+    "test": "phpunit",
+    "test:coverage": [
+      "@putenv XDEBUG_MODE=coverage",
+      "@php -d xdebug.mode=coverage vendor/bin/phpunit --coverage-text --coverage-html build/coverage"
+    ],
     "auto-scripts": {
     }
   }

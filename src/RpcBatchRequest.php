@@ -5,6 +5,7 @@ namespace Ufo\RpcObject;
 
 use Ufo\RpcError\RpcBadRequestException;
 use Ufo\RpcError\RpcJsonParseException;
+use Ufo\RpcObject\Factory\RpcRequestFactory;
 
 class RpcBatchRequest
 {
@@ -34,7 +35,7 @@ class RpcBatchRequest
             $data = json_decode($json, true) ?? throw new RpcJsonParseException('Invalid batch JSON format');
             $collection = new static();
             foreach ($data as $requestArray) {
-                $collection->addRequestObject(RpcRequest::fromArray($requestArray));
+                $collection->addRequestObject(RpcRequestFactory::fromArray($requestArray));
             }
             return $collection;
 
