@@ -54,11 +54,11 @@ class RealUrlHttpTest extends TestCase
             self::assertTrue($ready, 'Local HTTP server failed to start: ' . file_get_contents($serverLog));
             $validator = Validation::createValidator();
             $url = 'http://' . $address;
-            self::assertCount(0, $validator->validate($url . '/accept', new AssertRealUrl()));
+            self::assertCount(0, $validator->validate($url . '/accept', new AssertRealUrl(requireTld: false)));
             $firstLog = file_get_contents($log);
-            self::assertCount(0, $validator->validate($url . '/accept', new AssertRealUrl()));
+            self::assertCount(0, $validator->validate($url . '/accept', new AssertRealUrl(requireTld: false)));
             self::assertSame($firstLog, file_get_contents($log), 'Cached validation should issue no further HTTP requests.');
-            self::assertCount(1, $validator->validate($url . '/reject', new AssertRealUrl()));
+            self::assertCount(1, $validator->validate($url . '/reject', new AssertRealUrl(requireTld: false)));
             $requests = array_map(fn (string $line): array => json_decode($line, true), array_filter(explode("\n", trim(file_get_contents($log)))));
             self::assertSame(['OPTIONS', 'POST', 'OPTIONS', 'POST'], array_column($requests, 'method'));
             self::assertSame(['rpc.callback' => 'check real webhook url'], json_decode($requests[1]['body'], true));
@@ -66,7 +66,7 @@ class RealUrlHttpTest extends TestCase
             proc_terminate($process);
             proc_close($process);
             $process = null;
-            self::assertCount(1, $validator->validate($url . '/offline', new AssertRealUrl()));
+            self::assertCount(1, $validator->validate($url . '/offline', new AssertRealUrl(requireTld: false)));
         } finally {
             if (is_resource($process)) {
                 proc_terminate($process);

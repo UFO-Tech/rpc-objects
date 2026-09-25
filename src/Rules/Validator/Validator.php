@@ -9,7 +9,7 @@ use Ufo\DTO\Helpers\Validator as DtoValidator;
 class Validator extends DtoValidator
 {
     /**
-     * @param string $class
+     * @param class-string<AbstractRpcErrorException> $class
      * @return void
      * @throws AbstractRpcErrorException
      */
