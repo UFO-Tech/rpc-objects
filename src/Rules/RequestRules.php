@@ -5,6 +5,7 @@ namespace Ufo\RpcObject\Rules;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as Assert;
 use Ufo\RpcObject\RpcNotificationRequest;
+use Ufo\RpcObject\SpecialRpcParamsEnum;
 
 class RequestRules
 {
@@ -24,7 +25,6 @@ class RequestRules
             allowExtraFields: true
         );
     }
-
 
     public static function assertId(): Constraint
     {
@@ -54,14 +54,15 @@ class RequestRules
     public static function assertParams(): Constraint
     {
         return new Assert\Optional([
+            new Assert\NotNull(),
             new Assert\Type('array'),
             new Assert\Count(min: 1),
             new Assert\Collection(
-                fields: SpecialParamsRules::assertAllParams(),
+                fields: [
+                    SpecialRpcParamsEnum::PREFIX => new Assert\Optional(SpecialParamsRules::assertAllParamsCollection()),
+                ],
                 allowExtraFields: true,
             ),
         ]);
     }
-
-
 }

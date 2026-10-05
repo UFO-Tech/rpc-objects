@@ -35,7 +35,7 @@ class SpecialParamsRules
     public static function assertTimeout(): Constraint
     {
         return new Assert\Optional([
-            new Assert\NotBlank(),
+            new Assert\NotNull(),
             new Assert\Type(type: ['int', 'float']),
             new Assert\Range(min: 10, max: 120)
         ]);

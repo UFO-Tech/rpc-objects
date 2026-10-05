@@ -119,6 +119,21 @@ class ValidationTest extends TestCase
         yield 'invalid version' => [['method' => 'ping', 'jsonrpc' => 'bad'], false];
         yield 'empty params' => [['method' => 'ping', 'params' => []], false];
         yield 'valid params' => [['method' => 'ping', 'params' => ['name' => 'Ada']], true];
+        yield 'positional params' => [['method' => 'ping', 'params' => ['Ada', 42]], true];
+        yield 'scalar params' => [['method' => 'ping', 'params' => 'Ada'], false];
+        yield 'null params' => [['method' => 'ping', 'params' => null], false];
+        yield 'only special params' => [['method' => 'ping', 'params' => ['$rpc' => ['timeout' => 30]]], true];
+        yield 'empty special params' => [['method' => 'ping', 'params' => ['$rpc' => []]], true];
+        yield 'unknown special param' => [['method' => 'ping', 'params' => ['$rpc' => ['future' => 1]]], true];
+        yield 'all special params' => [['method' => 'ping', 'params' => [
+            'name' => 'Ada',
+            '$rpc' => ['timeout' => 120, 'rayId' => 'root', 'ignoreCache' => true],
+        ]], true];
+        yield 'special params not array' => [['method' => 'ping', 'params' => ['$rpc' => 'timeout']], false];
+        yield 'timeout below range' => [['method' => 'ping', 'params' => ['$rpc' => ['timeout' => 9]]], false];
+        yield 'timeout above range' => [['method' => 'ping', 'params' => ['$rpc' => ['timeout' => 121]]], false];
+        yield 'timeout as string' => [['method' => 'ping', 'params' => ['$rpc' => ['timeout' => '30']]], false];
+        yield 'null callback' => [['method' => 'ping', 'params' => ['$rpc' => ['callback' => null]]], false];
     }
 
     /**
