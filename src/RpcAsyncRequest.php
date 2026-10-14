@@ -3,6 +3,7 @@
 namespace Ufo\RpcObject;
 
 use JetBrains\PhpStorm\Deprecated;
+use Ufo\RpcObject\RPC\APIGroups;
 
 readonly class RpcAsyncRequest
 {
@@ -11,6 +12,7 @@ readonly class RpcAsyncRequest
         public RpcRequest $rpcRequest,
         public string $token = '',
         public array $meta = [],
+        public string $apiGroup = APIGroups::DEFAULT_GROUP,
     ) {}
 
     /**
