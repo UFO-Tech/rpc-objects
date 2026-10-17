@@ -3,7 +3,7 @@
 namespace Ufo\RpcObject\Rules\Validator;
 
 use ReflectionMethod;
-use ReflectionParameter;
+use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -22,6 +22,14 @@ class RpcValidator
      */
     protected array $violations;
 
+    /**
+     * Constraint-и параметрів методів: "<class>::<method>" => [paramName => Constraint[]].
+     * Залежать лише від коду, тому живуть весь процес (безпечно для long-running воркерів).
+     *
+     * @var array<string, array<string, Constraint[]>>
+     */
+    protected array $constraintsCache = [];
+
     public function __construct(protected ValidatorInterface $validator) {}
 
     /**
@@ -33,10 +41,8 @@ class RpcValidator
         array $params
     ): void {
         $this->clearPrev();
-        $refMethod = new ReflectionMethod($procedureObject, $procedureMethod);
-        $paramRefs = $refMethod->getParameters();
-        foreach ($paramRefs as $paramRef) {
-            $this->validateParam($paramRef, $params[$paramRef->getName()] ?? null);
+        foreach ($this->getMethodConstraints($procedureObject, $procedureMethod) as $paramName => $assertions) {
+            $this->validateParam($paramName, $assertions, $params[$paramName] ?? null);
         }
         if ($this->violationCount > 0) {
             $errors = [];
@@ -55,20 +61,41 @@ class RpcValidator
         $this->violationCount = 0;
     }
 
-    protected function validateParam(ReflectionParameter $paramRef, mixed $value): void
+    /**
+     * Reflection і створення constraint-ів виконуються один раз на метод у межах процесу.
+     * Помилки побудови (некоректний constraint) не ковтаються і не потрапляють у кеш.
+     *
+     * @return array<string, Constraint[]>
+     * @throws \ReflectionException
+     */
+    protected function getMethodConstraints(object $procedureObject, string $procedureMethod): array
     {
-        try {
-            $attribute = $paramRef->getAttributes(Assertions::class);
-            if (count($attribute) > 0) {
-                $attribute = $attribute[0];
+        $key = $procedureObject::class . '::' . $procedureMethod;
+        if (!isset($this->constraintsCache[$key])) {
+            $constraints = [];
+            $refMethod = new ReflectionMethod($procedureObject, $procedureMethod);
+            foreach ($refMethod->getParameters() as $paramRef) {
+                $attributes = $paramRef->getAttributes(Assertions::class);
+                if (count($attributes) === 0) {
+                    continue;
+                }
+                $constraints[$paramRef->getName()] = $attributes[0]->newInstance()->assertions;
             }
-            $assertions = $attribute->newInstance()->assertions;
-            $violations = $this->validator->validate($value, $assertions);
-            if (count($violations) > 0) {
-                $this->violations[$paramRef->getName()] = $violations;
-                $this->violationCount += count($violations);
-            }
-        } catch (\Throwable) {
+            $this->constraintsCache[$key] = $constraints;
+        }
+
+        return $this->constraintsCache[$key];
+    }
+
+    /**
+     * @param Constraint[] $assertions
+     */
+    protected function validateParam(string $paramName, array $assertions, mixed $value): void
+    {
+        $violations = $this->validator->validate($value, $assertions);
+        if (count($violations) > 0) {
+            $this->violations[$paramName] = $violations;
+            $this->violationCount += count($violations);
         }
     }
 
