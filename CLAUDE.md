@@ -11,7 +11,7 @@
 - PHP >= 8.3 (контейнер розробки — 8.4; код має лишатися сумісним з 8.3), потрібен `ext-intl`.
 - Ключові залежності: `ufo-tech/rpc-exceptions` (ієрархія виключень), `ufo-tech/dto-transformer` (^3, DTO ↔ array), `symfony/serializer`, `symfony/validator`, `symfony/http-client`.
 - Публічна документація: https://docs.ufo-tech.space/bin/view/docs/JsonRpcBundle/
-- Поточна лінія версій — 3.7.x (git-теги `3.x.y`).
+- Поточна лінія версій — 3.9.x (git-теги `3.x.y`).
 
 Бібліотеку споживає RPC-сервер/клієнт (JsonRpcBundle) — тут немає HTTP-ядра й роутингу. Відправлення відповідей, обробка черг і виконання процедур лишаються відповідальністю застосунку.
 

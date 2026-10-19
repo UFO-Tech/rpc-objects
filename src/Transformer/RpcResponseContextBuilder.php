@@ -7,19 +7,22 @@ use Symfony\Component\Serializer\Context\ContextBuilderTrait;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Ufo\RpcObject\RpcResponse;
 
-use function array_map;
 use function array_merge_recursive;
-use function is_array;
 
+/**
+ * Immutable, like Symfony context builders: every with*() / removeParent() returns a new instance.
+ * The builder is a shared service, so a mutated one carried the groups of one response
+ * (e.g. "error") into the next one, and a DTO result was normalized as [].
+ */
 final class RpcResponseContextBuilder implements ContextBuilderInterface
 {
     use ContextBuilderTrait;
 
     protected string $parent = '';
 
-    public function __construct() 
+    public function __construct()
     {
-        $this->withContext([RpcErrorNormalizer::RPC_CONTEXT => true]);
+        $this->context = [RpcErrorNormalizer::RPC_CONTEXT => true];
     }
 
     public function withContext(ContextBuilderInterface|array $context): static
@@ -27,8 +30,9 @@ final class RpcResponseContextBuilder implements ContextBuilderInterface
         if ($context instanceof ContextBuilderInterface) {
             $context = $context->toArray();
         }
-        $this->context = array_merge_recursive($this->context, $context);
-        return $this;
+        $instance = clone $this;
+        $instance->context = array_merge_recursive($this->context, $context);
+        return $instance;
     }
 
     /**
@@ -37,36 +41,32 @@ final class RpcResponseContextBuilder implements ContextBuilderInterface
      */
     public function withGroup(string|array $group): static
     {
-        if (is_array($group)) {
-            array_map(
-                function ($g) {
-                    $this->withGroup($g);
-                },
-                $group
-            );
-        } else {
-            $this->withContext([AbstractNormalizer::GROUPS => [$group]]);
+        $instance = $this;
+        foreach ((array) $group as $g) {
+            $instance = $instance->withContext([AbstractNormalizer::GROUPS => [$g]]);
         }
 
-        return $this;
+        return $instance;
     }
 
     public function withResponseSignature(RpcResponse $response): static
     {
-        $this->withGroup($this->parent = $response->getResponseSignature());
-        return $this;
+        $instance = $this->withGroup($response->getResponseSignature());
+        $instance->parent = $response->getResponseSignature();
+        return $instance;
     }
 
     public function removeParent(): static
     {
-        if (isset($this->context[AbstractNormalizer::GROUPS])) {
-            $this->context[AbstractNormalizer::GROUPS] = array_filter(
-                $this->context[AbstractNormalizer::GROUPS],
+        $instance = clone $this;
+        if (isset($instance->context[AbstractNormalizer::GROUPS])) {
+            $instance->context[AbstractNormalizer::GROUPS] = array_filter(
+                $instance->context[AbstractNormalizer::GROUPS],
                 function ($item)  {
                     return $item !== $this->parent;
                 }
             );
         }
-        return $this;
+        return $instance;
     }
 }

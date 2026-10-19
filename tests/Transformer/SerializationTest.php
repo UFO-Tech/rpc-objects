@@ -114,16 +114,34 @@ class SerializationTest extends TestCase
     {
         $context = new RpcResponseContextBuilder();
         self::assertSame(['rpc_handle' => true], $context->toArray());
-        self::assertSame($context, $context->removeParent());
+        self::assertSame(['rpc_handle' => true], $context->removeParent()->toArray());
         $response = new RpcResponse(1);
-        self::assertSame($context, $context->withResponseSignature($response));
-        $context->withGroup(['detail', 'list']);
+        $context = $context->withResponseSignature($response)->withGroup(['detail', 'list']);
         self::assertSame(['result', 'detail', 'list'], $context->toArray()['groups']);
         self::assertSame(['detail', 'list'], array_values($context->removeParent()->toArray()['groups']));
         $extra = (new \Symfony\Component\Serializer\Context\Normalizer\ObjectNormalizerContextBuilder())->withSkipNullValues(true);
         self::assertTrue($context->withContext($extra)->toArray()['skip_null_values']);
         $errorContext = (new RpcResponseContextBuilder())->withResponseSignature(new RpcResponse(1, error: new RpcError(-32600, 'bad', [])));
         self::assertSame(['error'], $errorContext->toArray()['groups']);
+    }
+
+    /**
+     * Перевіряє, що білдер не змінюється: спільний екземпляр не переносить групи однієї відповіді
+     * (наприклад, "error") у наступну, і DTO-результат після помилки не нормалізується як [].
+     */
+    public function testContextBuilderIsImmutable(): void
+    {
+        $shared = new RpcResponseContextBuilder();
+        $error = new RpcResponse(1, error: new RpcError(-32600, 'bad', []));
+
+        self::assertNotSame($shared, $shared->withGroup('detail'));
+        self::assertNotSame($shared, $shared->removeParent());
+        self::assertSame(['error'], $shared->withResponseSignature($error)->toArray()['groups']);
+        self::assertSame(['rpc_handle' => true], $shared->toArray());
+
+        $result = new RpcResponse(2, new Person('Ada', 37), contextBuilder: $shared);
+        self::assertSame(['result'], $shared->withResponseSignature($result)->toArray()['groups']);
+        self::assertSame(['name' => 'Ada', 'age' => 37], $result->getResult());
     }
 
     /**
