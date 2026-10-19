@@ -13,6 +13,10 @@ This package provides structured DTO handling for use in RPC-oriented systems, i
 composer require ufo-tech/rpc-objects
 ```
 
+### Release notes
+
+All versions with what was added and how to use it: [releases](releases/README.md). Latest: [3.9](releases/3.x/3.9/README.md).
+
 ### Requests and notifications
 
 Use `Ufo\RpcObject\Factory\RpcRequestFactory` to parse incoming messages:
