@@ -8,6 +8,7 @@
 
 | Версія | Реліз | Головне |
 | --- | --- | --- |
+| [3.10](3.x/3.10/README-UA.md) | 2026-10-30 | dto-transformer ^4 і його імена 4.0; `RpcRequestFactory`: `-32600` для некоректних `id` / `method` / `jsonrpc`, `-32602` для `params`; `Validator::throw()` враховує аргумент; об'єкти у вкладених масивах результату нормалізуються |
 | [3.9](3.x/3.9/README-UA.md) | 2026-10-14 | 3.9.2: незмінний `RpcResponseContextBuilder`. 3.9.1: constraint-и валідатора кешуються для кожного методу, помилки валідації більше не ковтаються. `#[RPC\APIGroups]` і `RpcAsyncRequest::$apiGroup` |
 | [3.8](3.x/3.8/README-UA.md) | 2026-09-25 | JSON-RPC notifications (`RpcNotificationRequest`), `RpcRequestFactory`, Symfony 8, валідація `$rpc` всередині `params.$rpc` |
 | [3.7](3.x/3.7/README-UA.md) | 2026-09-17 | Readonly `RpcAsyncRequest` з `meta`, `RpcTransport::SYNC_PREFIX` / `ASYNC_PREFIX`, `value_type` як ім'я класу |

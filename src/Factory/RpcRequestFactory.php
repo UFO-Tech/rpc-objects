@@ -7,6 +7,7 @@ use ReflectionClass;
 use Throwable;
 use TypeError;
 use Ufo\RpcError\AbstractRpcErrorException;
+use Ufo\RpcError\RpcBadParamException;
 use Ufo\RpcError\RpcBadRequestException;
 use Ufo\RpcError\RpcJsonParseException;
 use Ufo\RpcObject\RPC\Info;
@@ -21,6 +22,7 @@ use function class_exists;
 use function is_a;
 use function is_numeric;
 use function json_encode;
+use function str_starts_with;
 
 use const JSON_THROW_ON_ERROR;
 
@@ -102,7 +104,7 @@ class RpcRequestFactory
         }
 
         try {
-            $validator->throw(RpcBadRequestException::class);
+            $validator->throw(static::validationErrorClass($validator));
         } catch (AbstractRpcErrorException $e) {
             $object->setError($e);
         }
@@ -111,5 +113,17 @@ class RpcRequestFactory
             $object->setRpcParams($splitter->getSpecialParams());
         }
         return $object;
+    }
+
+    /**
+     * Помилка в params — RpcBadParamException (-32602), у решті полів запиту — RpcBadRequestException (-32600).
+     *
+     * @return class-string<AbstractRpcErrorException>
+     */
+    protected static function validationErrorClass(Validator $validator): string
+    {
+        $path = $validator->hasErrors() ? $validator->getErrors()[0]->getPropertyPath() : '';
+
+        return str_starts_with($path, '[params]') ? RpcBadParamException::class : RpcBadRequestException::class;
     }
 }

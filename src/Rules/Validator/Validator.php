@@ -15,7 +15,7 @@ class Validator extends DtoValidator
      */
     public function throw(string $class = RpcBadParamException::class): void
     {
-        if (!$class instanceof AbstractRpcErrorException) {
+        if (!is_a($class, AbstractRpcErrorException::class, true)) {
             $class = RpcBadParamException::class;
         }
         if ($this->hasErrors()) {

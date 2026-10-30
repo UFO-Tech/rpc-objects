@@ -14,14 +14,14 @@
 
 ## Вимоги
 
-| | 3.0.1 | 3.9.2 |
+| | 3.0.1 | 3.10.0 |
 |---|---|---|
 | PHP | `>=8.3` | `>=8.3` |
 | `symfony/serializer`, `symfony/validator` | `^7.2` | `^7.2\|^8.0` (з 3.8) |
 | `symfony/property-info` | — | `^7.2\|^8.0` |
 | `symfony/http-client`, `symfony/property-access` | `*` | `*` |
 | `ufo-tech/rpc-exceptions` | `*` | `^2.0.1` (з 3.8) |
-| `ufo-tech/dto-transformer` | `^1.0` | `^3.1` (`^2.0` у 3.2–3.5, `^3.0` з 3.6) |
+| `ufo-tech/dto-transformer` | `^1.0` | `^4.0` (`^2.0` у 3.2–3.5, `^3.0` у 3.6–3.8.0, `^3.1` у 3.8.1–3.9) |
 | Інше | `ext-intl` | `ext-intl` |
 
 ## Версії
@@ -38,6 +38,7 @@
 | [3.7](3.7/README-UA.md) | Readonly `RpcAsyncRequest` з `meta`, `RpcTransport::SYNC_PREFIX` / `ASYNC_PREFIX`, `value_type` як ім'я класу |
 | [3.8](3.8/README-UA.md) | JSON-RPC notifications (`RpcNotificationRequest`), `RpcRequestFactory`, Symfony 8, валідація `$rpc` всередині `params.$rpc` |
 | [3.9](3.9/README-UA.md) | `#[RPC\APIGroups]` і `RpcAsyncRequest::$apiGroup`; 3.9.1 кешує constraint-и валідатора й не ковтає помилки; 3.9.2 незмінний `RpcResponseContextBuilder` |
+| [3.10](3.10/README-UA.md) | dto-transformer ^4 і його імена 4.0; коди помилок `RpcRequestFactory` за полем (`-32600` / `-32602`); `Validator::throw()` враховує аргумент; об'єкти у вкладених масивах результату нормалізуються |
 
 ## Оновлення з 2.x
 

@@ -3,7 +3,7 @@
 namespace Ufo\RpcObject\RPC;
 
 use Attribute;
-use Ufo\DTO\Helpers\TypeHintResolver;
+use Ufo\DTO\Schema\Type\TypeHintResolver;
 
 use function array_filter;
 use function array_values;

@@ -9,8 +9,8 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\SerializerAwareInterface;
 use Symfony\Component\Serializer\SerializerInterface;
+use Ufo\DTO\Contract\ArrayConvertibleInterface;
 use Ufo\DTO\DTOTransformer;
-use Ufo\DTO\Interfaces\IArrayConvertible;
 use UnitEnum;
 
 class DtoObjectNormalizer implements NormalizerInterface, DenormalizerInterface, SerializerAwareInterface
@@ -22,7 +22,7 @@ class DtoObjectNormalizer implements NormalizerInterface, DenormalizerInterface,
 
     public function normalize(mixed $data, ?string $format = null, array $context = []): ?array
     {
-        if ($data instanceof IArrayConvertible) {
+        if ($data instanceof ArrayConvertibleInterface) {
             return $data->toArray();
         }
 

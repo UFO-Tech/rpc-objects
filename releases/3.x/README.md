@@ -14,14 +14,14 @@ Major 3 moved the DTO layer into a separate package, `ufo-tech/dto-transformer`,
 
 ## Requirements
 
-| | 3.0.1 | 3.9.2 |
+| | 3.0.1 | 3.10.0 |
 |---|---|---|
 | PHP | `>=8.3` | `>=8.3` |
 | `symfony/serializer`, `symfony/validator` | `^7.2` | `^7.2\|^8.0` (since 3.8) |
 | `symfony/property-info` | — | `^7.2\|^8.0` |
 | `symfony/http-client`, `symfony/property-access` | `*` | `*` |
 | `ufo-tech/rpc-exceptions` | `*` | `^2.0.1` (since 3.8) |
-| `ufo-tech/dto-transformer` | `^1.0` | `^3.1` (`^2.0` in 3.2–3.5, `^3.0` since 3.6) |
+| `ufo-tech/dto-transformer` | `^1.0` | `^4.0` (`^2.0` in 3.2–3.5, `^3.0` in 3.6–3.8.0, `^3.1` in 3.8.1–3.9) |
 | Other | `ext-intl` | `ext-intl` |
 
 ## Versions
@@ -38,6 +38,7 @@ Major 3 moved the DTO layer into a separate package, `ufo-tech/dto-transformer`,
 | [3.7](3.7/README.md) | Readonly `RpcAsyncRequest` with `meta`, `RpcTransport::SYNC_PREFIX` / `ASYNC_PREFIX`, `value_type` as a class name |
 | [3.8](3.8/README.md) | JSON-RPC notifications (`RpcNotificationRequest`), `RpcRequestFactory`, Symfony 8, `$rpc` validated inside `params.$rpc` |
 | [3.9](3.9/README.md) | `#[RPC\APIGroups]` and `RpcAsyncRequest::$apiGroup`; 3.9.1 caches validator constraints and stops swallowing errors; 3.9.2 immutable `RpcResponseContextBuilder` |
+| [3.10](3.10/README.md) | dto-transformer ^4 and its 4.0 names; `RpcRequestFactory` error codes by field (`-32600` / `-32602`); `Validator::throw()` honours its argument; objects in nested result arrays normalized |
 
 ## Upgrading from 2.x
 

@@ -52,6 +52,20 @@ class RpcResponseTest extends TestCase
         self::assertSame(['person' => ['name' => 'Ada', 'age' => 37], 'scalar' => 3], $response->getResult());
     }
 
+    /** Об’єкти в масиві масивів і в словнику списків нормалізуються на будь-якій глибині. */
+    public function testNestedArraysOfObjectsAreNormalized(): void
+    {
+        $context = (new RpcResponseContextBuilder())->withGroup('detail');
+        $ada = new Person('Ada', 37);
+        $normalized = ['name' => 'Ada', 'age' => 37];
+
+        $response = new RpcResponse('r', [[$ada], [$ada, $ada]], contextBuilder: $context);
+        self::assertSame([[$normalized], [$normalized, $normalized]], $response->getResult());
+
+        $response = new RpcResponse('r', ['left' => [$ada], 'right' => [[$ada]], 'n' => 1], contextBuilder: $context);
+        self::assertSame(['left' => [$normalized], 'right' => [[$normalized]], 'n' => 1], $response->getResult());
+    }
+
     /**
      * Перевіряє, що серіалізована відповідь містить лише поля RPC, а пов’язаний запит і налаштування кешу
      * доступні окремо.

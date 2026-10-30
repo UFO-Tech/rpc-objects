@@ -8,6 +8,7 @@ Most historical git tags were not preserved. Versions are reconstructed from the
 
 | Version | Released | Highlights |
 | --- | --- | --- |
+| [3.10](3.x/3.10/README.md) | 2026-10-30 | dto-transformer ^4 and its 4.0 names; `RpcRequestFactory`: `-32600` for invalid `id` / `method` / `jsonrpc`, `-32602` for `params`; `Validator::throw()` honours its argument; objects in nested result arrays normalized |
 | [3.9](3.x/3.9/README.md) | 2026-10-14 | 3.9.2: immutable `RpcResponseContextBuilder`. 3.9.1: validator constraints cached per method, validation errors no longer swallowed. `#[RPC\APIGroups]` and `RpcAsyncRequest::$apiGroup` |
 | [3.8](3.x/3.8/README.md) | 2026-09-25 | JSON-RPC notifications (`RpcNotificationRequest`), `RpcRequestFactory`, Symfony 8, `$rpc` validated inside `params.$rpc` |
 | [3.7](3.x/3.7/README.md) | 2026-09-17 | Readonly `RpcAsyncRequest` with `meta`, `RpcTransport::SYNC_PREFIX` / `ASYNC_PREFIX`, `value_type` as a class name |

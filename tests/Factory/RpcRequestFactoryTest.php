@@ -4,6 +4,8 @@ namespace Ufo\RpcObject\Tests\Factory;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Ufo\RpcError\RpcBadParamException;
+use Ufo\RpcError\RpcBadRequestException;
 use Ufo\RpcError\RpcJsonParseException;
 use Ufo\RpcObject\Factory\RpcRequestFactory;
 use Ufo\RpcObject\RpcBatchRequest;
@@ -35,6 +37,26 @@ class RpcRequestFactoryTest extends TestCase
         yield [42];
         yield [0];
         yield ['0'];
+    }
+
+    /**
+     * Перевіряє, що помилка в params дає -32602, а помилка решти полів запиту — -32600.
+     */
+    #[DataProvider('invalidRequestErrors')]
+    public function testValidationErrorClassDependsOnField(array $data, string $class, int $code, string $path): void
+    {
+        $request = RpcRequestFactory::fromArray($data);
+        self::assertTrue($request->hasError());
+        self::assertSame($class, $request->getError()::class);
+        self::assertSame($code, $request->getError()->getCode());
+        self::assertStringStartsWith($path, $request->getError()->getMessage());
+    }
+
+    public static function invalidRequestErrors(): iterable
+    {
+        yield 'missing method' => [['id' => 1, 'params' => ['a' => 1]], RpcBadRequestException::class, -32600, '[method]'];
+        yield 'blank method' => [['id' => 1, 'method' => '', 'params' => ['a' => 1]], RpcBadRequestException::class, -32600, '[method]'];
+        yield 'empty params' => [['id' => 1, 'method' => 'ping', 'params' => []], RpcBadParamException::class, -32602, '[params]'];
     }
 
     public function testNotPresentIdCreatesRequest(): void

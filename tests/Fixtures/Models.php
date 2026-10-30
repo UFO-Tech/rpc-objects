@@ -4,7 +4,7 @@ namespace Ufo\RpcObject\Tests\Fixtures;
 
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use Ufo\DTO\Interfaces\IArrayConvertible;
+use Ufo\DTO\Contract\ArrayConvertibleInterface;
 use Ufo\RpcObject\RPC\Assertions;
 use Ufo\RpcObject\RPC;
 
@@ -22,7 +22,7 @@ class Person
     ) {}
 }
 
-class Convertible implements IArrayConvertible
+class Convertible implements ArrayConvertibleInterface
 {
     public function toArray(bool $publicOnly = true): array { return ['custom' => true]; }
 }

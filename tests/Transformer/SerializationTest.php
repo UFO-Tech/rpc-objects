@@ -32,7 +32,7 @@ class SerializationTest extends TestCase
     }
 
     /**
-     * Перевіряє власне перетворення IArrayConvertible, додавання назви DTO у розширеному режимі та
+     * Перевіряє власне перетворення ArrayConvertibleInterface, додавання назви DTO у розширеному режимі та
      * визначення підтримуваних об’єктів.
      */
     public function testConvertibleAndSmartNormalization(): void
@@ -223,7 +223,7 @@ class SerializationTest extends TestCase
     public function testAttributeTransformerSupportsKnownAttributes(): void
     {
         foreach (AttributeTransformer::ATTRIBUTES as $class) self::assertTrue(AttributeTransformer::isSupportClass($class));
-        self::assertTrue(AttributeTransformer::isSupportClass(\Ufo\DTO\Interfaces\IArrayConstructible::class));
+        self::assertTrue(AttributeTransformer::isSupportClass(\Ufo\DTO\Contract\ArrayConstructibleInterface::class));
         self::assertFalse(AttributeTransformer::isSupportClass(Person::class));
         $cache = AttributeTransformer::fromArray(Cache::class, ['lifetimeSecond' => 42]);
         self::assertInstanceOf(Cache::class, $cache);

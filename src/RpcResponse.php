@@ -7,7 +7,7 @@ use Symfony\Component\Serializer\Attribute\Ignore;
 use Symfony\Component\Serializer\Attribute\SerializedName;
 use Symfony\Component\Serializer\Context\ContextBuilderInterface;
 use Symfony\Component\Serializer\SerializerInterface;
-use Ufo\DTO\Helpers\TypeHintResolver;
+use Ufo\DTO\Schema\Type\TypeHintResolver;
 use Ufo\RpcError\AbstractRpcErrorException;
 use Ufo\RpcError\WrongWayException;
 use Ufo\RpcObject\RPC\Cache;
@@ -68,15 +68,24 @@ class RpcResponse
     {
         return $asIs ? $this->result : match (gettype($this->result)) {
             TypeHintResolver::OBJECT->value => $this->normalizeResult($this->result),
-            TypeHintResolver::ARRAY->value => array_map(function ($data) {
-                try {
-                    return $this->normalizeResult($data);
-                } catch (\Throwable $e) {
-                    return $data;
-                }
-            }, $this->result),
+            TypeHintResolver::ARRAY->value => $this->normalizeArray($this->result),
             default => $this->result
         };
+    }
+
+    /** Обходить масив на будь-яку глибину: DTO в масиві масивів теж нормалізуються. */
+    protected function normalizeArray(array $result): array
+    {
+        return array_map(function ($data) {
+            if (is_array($data)) {
+                return $this->normalizeArray($data);
+            }
+            try {
+                return $this->normalizeResult($data);
+            } catch (\Throwable $e) {
+                return $data;
+            }
+        }, $result);
     }
 
     protected function normalizeResult(object $result): array|string|int
